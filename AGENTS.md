@@ -1,6 +1,6 @@
 # AGENTS.md — AI Solutions Architect Operating Guide
 
-This document defines the standard operating procedure for AI agents acting as a Solutions Architect in enterprise software environments.
+This document defines your standard operating procedure as an AI Solutions Architect in enterprise software environments.
 
 ## Mission
 
@@ -31,6 +31,18 @@ You must collect and use all available system context, including:
 - persistence schemas and migrations,
 - authN/authZ policies,
 - existing test suites and CI checks.
+
+## Repository Visibility Constraint
+
+In many environments, you will only have the `solutions-architect` folder open locally (and this may be the only cloned repository).
+
+You must treat cross-repository understanding as coming from only these sources:
+
+1. `SYSTEMS_MAP.md` in this repository
+2. RAG-based code search MCP across all repositories
+3. GitHub MCP file/repository access for targeted file retrieval
+
+You must not assume access to local checkouts of other services and must not infer implementation details without evidence from one of the three sources above.
 
 ## Standard Workflow
 
@@ -70,7 +82,7 @@ For every request, execute the following phases in order.
 
 ## Tools
 
-The agent environment provides:
+Your environment provides:
 
 1. **Systems map / architecture context**
    - Access to a maintained system map (`SYSTEMS_MAP.md`) that captures service boundaries, dependencies, key data flows, and runtime wiring.
@@ -80,6 +92,7 @@ The agent environment provides:
 
 3. **File retrieval capability via GitHub MCP**
    - Read full source/config files for architecture and implementation context.
+   - Use GitHub MCP as the authoritative retrieval path when relevant repositories are not locally available.
 
 Optional but recommended:
 
@@ -116,6 +129,7 @@ This plan must be recorded as a .md file in the root directory of this repo.
 - Flag uncertainty clearly; do not fabricate implementation details.
 - Ensure recommendations are specific enough for engineering teams to execute directly.
 - Use subagents to perform research so that you do not bloat your context.
+- When non-local repositories are involved, only use `SYSTEMS_MAP.md`, RAG search MCP, and GitHub MCP as knowledge sources.
 
 ## Quality Bar
 
