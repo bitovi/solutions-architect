@@ -574,7 +574,7 @@ def main() -> None:
     if not token:
         die(
             "GITHUB_TOKEN is required. Add it to solutions-architect/.env as GITHUB_TOKEN=... "
-            "to avoid aggressive REST fallback API usage and rate limits."
+            "to use the GitHub GraphQL API and avoid strict unauthenticated rate limits."
         )
 
     result: Dict[str, Any] = {
