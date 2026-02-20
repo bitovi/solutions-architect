@@ -1,6 +1,8 @@
 # Bitovi Microservices System Map (AI Agent Context)
 
-This document provides a cross-repo system map for the following repositories:
+This document provides a cross-repo system map for the following repositories.
+
+All listed repositories are part of the **`bitovi-training` GitHub organization**:
 
 - `api-tests`
 - `auth-middleware`

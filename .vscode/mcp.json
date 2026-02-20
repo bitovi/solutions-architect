@@ -6,6 +6,11 @@
       "headers": {
         "Authorization": "Bearer GITHUB_PAT"
       }
+    },
+    "enterpriseCode": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "tsx", "../enterprise-ai-mcp/src/index.ts"]
     }
   }
 }

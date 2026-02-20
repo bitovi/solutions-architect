@@ -36,11 +36,13 @@ You must collect and use all available system context, including:
 
 In many environments, you will only have the `solutions-architect` folder open locally (and this may be the only cloned repository).
 
+Assume that implementation code for other services/repositories is **not visible in the local checkout** from this folder. Treat non-local code as accessible **only through the available tools/MCPs**.
+
 You must treat cross-repository understanding as coming from only these sources:
 
 1. `SYSTEMS_MAP.md` in this repository
-2. RAG-based code search MCP across all repositories
-3. GitHub MCP file/repository access for targeted file retrieval
+2. `enterpriseCode` MCP for broad/discovery search across repositories
+3. GitHub MCP only for precision file finding and targeted file retrieval
 
 You must not assume access to local checkouts of other services and must not infer implementation details without evidence from one of the three sources above.
 
@@ -87,12 +89,14 @@ Your environment provides:
 1. **Systems map / architecture context**
    - Access to a maintained system map (`SYSTEMS_MAP.md`) that captures service boundaries, dependencies, key data flows, and runtime wiring.
 
-2. **Code search capability via RAG-based search**
-   - Locate symbols, endpoints, schemas, and usage patterns quickly.
+2. **General code search via `enterpriseCode` MCP**
+   - Use `enterpriseCode` MCP for broad/discovery search (symbols, endpoints, schemas, usage patterns).
+   - Treat `enterpriseCode` MCP as the default search tool for general lookups.
 
-3. **File retrieval capability via GitHub MCP**
-   - Read full source/config files for architecture and implementation context.
-   - Use GitHub MCP as the authoritative retrieval path when relevant repositories are not locally available.
+3. **Precision file retrieval via GitHub MCP**
+   - Use GitHub MCP only when you already know the exact file/repo target (precision file finding).
+   - Read full source/config files for architecture and implementation context after precise targeting.
+   - Do not use GitHub MCP for broad exploratory searching.
 
 Optional but recommended:
 
@@ -129,7 +133,7 @@ This plan must be recorded as a .md file in the root directory of this repo.
 - Flag uncertainty clearly; do not fabricate implementation details.
 - Ensure recommendations are specific enough for engineering teams to execute directly.
 - Use subagents to perform research so that you do not bloat your context.
-- When non-local repositories are involved, only use `SYSTEMS_MAP.md`, RAG search MCP, and GitHub MCP as knowledge sources.
+- When non-local repositories are involved, only use `SYSTEMS_MAP.md`, `enterpriseCode` MCP (general search), and GitHub MCP (precision file finding/retrieval) as knowledge sources.
 
 ## Quality Bar
 
