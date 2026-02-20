@@ -1,0 +1,882 @@
+{
+  "schema_version": "1.1",
+  "generated_at": "2026-02-20T18:36:40Z",
+  "source": "GitHub GraphQL API",
+  "repos": [
+    {
+      "full_name": "bitovi-training/api-tests",
+      "html_url": "https://github.com/bitovi-training/api-tests",
+      "description": null,
+      "homepage": null,
+      "topics": [],
+      "visibility": "public",
+      "private": false,
+      "archived": false,
+      "disabled": false,
+      "fork": false,
+      "default_branch": "main",
+      "created_at": "2026-02-12T14:55:29Z",
+      "updated_at": "2026-02-12T15:28:14Z",
+      "pushed_at": "2026-02-12T15:20:44Z",
+      "license": null,
+      "open_issues_count": 0,
+      "stargazers_count": 0,
+      "watchers_count": 0,
+      "forks_count": 0,
+      "language": "TypeScript",
+      "owner": {
+        "login": "bitovi-training",
+        "type": "Organization"
+      },
+      "languages_bytes": {
+        "TypeScript": 44283,
+        "JavaScript": 312
+      },
+      "files": {
+        "readme": {
+          "path": "README.md",
+          "text": "# API Tests\n\nEnd-to-end API test suite for the Bitovi services. Tests are written in Jest + TypeScript and can bootstrap the local service stack via Docker Compose.\n\n## Prerequisites\n\n- Node.js 18+\n- Docker (Docker Desktop or compatible runtime)\n\n## Setup\n\n```bash\ncd api-tests\nnpm install\n```\n\n## Environment configuration\n\nThe tests read configuration from `api-tests/.env`. If the file does not exist, the global Jest setup will create one from `.env.example`.\n\n```env\nUSER_SERVICE_URL=http://localhost:8400\nORDER_SERVICE_URL=http://localhost:8100\nPRODUCT_SERVICE_URL=http://localhost:8200\nLOYALTY_SERVICE_URL=http://localhost:8300\n\n# Optional: tests will generate mock JWTs automatically if unset\nUSER_ROLE_TOKEN=\nMISSING_ROLES_TOKEN=\nROLE_CASE_TOKEN=\n```\n\n### Auth tokens\n\nIf the optional token values are blank, the test helpers generate mock JWTs at runtime. Provide real tokens if you want to validate auth behavior against a live identity provider.\n\n## Running tests\n\nThe global Jest setup will:\n\n1. Create `.env` if missing.\n2. Run `docker compose` with `service-infra/docker-compose.yml`.\n3. Wait for service ports `8100`, `8200`, `8300`, and `8400` to become available.\n\nRun all tests:\n\n```bash\nnpm test\n```\n\nRun a specific suite:\n\n```bash\nnpm run test:user\nnpm run test:order\nnpm run test:product\nnpm run test:loyalty\n```\n\n## Notes\n\n- Ensure Docker is running before executing the tests.\n- If you already have the services running, they will be reused (ports must match the `.env` values)."
+        },
+        "codeowners": null,
+        "catalog": null,
+        "openapi": null
+      },
+      "derived": {
+        "repo_kind": "tests",
+        "env_vars": [
+          {
+            "name": "LOYALTY_SERVICE_URL",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "SER_SERVICE_URL=http://localhost:8400\nORDER_SERVICE_URL=http://localhost:8100\nPRODUCT_SERVICE_URL=http://localhost:8200\nLOYALTY_SERVICE_URL=http://localhost:8300\n\n# Optional: tests will generate mock JWTs automatically if unset\nUSER_ROLE_TOKEN=\nMISSING_ROLES_"
+            }
+          },
+          {
+            "name": "MISSING_ROLES_TOKEN",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "TY_SERVICE_URL=http://localhost:8300\n\n# Optional: tests will generate mock JWTs automatically if unset\nUSER_ROLE_TOKEN=\nMISSING_ROLES_TOKEN=\nROLE_CASE_TOKEN=\n```\n\n### Auth tokens\n\nIf the optional token values are blank, the test helpers generate mock JWTs at"
+            }
+          },
+          {
+            "name": "ORDER_SERVICE_URL",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "es not exist, the global Jest setup will create one from `.env.example`.\n\n```env\nUSER_SERVICE_URL=http://localhost:8400\nORDER_SERVICE_URL=http://localhost:8100\nPRODUCT_SERVICE_URL=http://localhost:8200\nLOYALTY_SERVICE_URL=http://localhost:8300\n\n# Optional:"
+            }
+          },
+          {
+            "name": "PRODUCT_SERVICE_URL",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "create one from `.env.example`.\n\n```env\nUSER_SERVICE_URL=http://localhost:8400\nORDER_SERVICE_URL=http://localhost:8100\nPRODUCT_SERVICE_URL=http://localhost:8200\nLOYALTY_SERVICE_URL=http://localhost:8300\n\n# Optional: tests will generate mock JWTs automaticall"
+            }
+          },
+          {
+            "name": "ROLE_CASE_TOKEN",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "/localhost:8300\n\n# Optional: tests will generate mock JWTs automatically if unset\nUSER_ROLE_TOKEN=\nMISSING_ROLES_TOKEN=\nROLE_CASE_TOKEN=\n```\n\n### Auth tokens\n\nIf the optional token values are blank, the test helpers generate mock JWTs at runtime. Provide"
+            }
+          },
+          {
+            "name": "USER_ROLE_TOKEN",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "alhost:8200\nLOYALTY_SERVICE_URL=http://localhost:8300\n\n# Optional: tests will generate mock JWTs automatically if unset\nUSER_ROLE_TOKEN=\nMISSING_ROLES_TOKEN=\nROLE_CASE_TOKEN=\n```\n\n### Auth tokens\n\nIf the optional token values are blank, the test helpers g"
+            }
+          },
+          {
+            "name": "USER_SERVICE_URL",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "n from `api-tests/.env`. If the file does not exist, the global Jest setup will create one from `.env.example`.\n\n```env\nUSER_SERVICE_URL=http://localhost:8400\nORDER_SERVICE_URL=http://localhost:8100\nPRODUCT_SERVICE_URL=http://localhost:8200\nLOYALTY_SERVICE"
+            }
+          }
+        ],
+        "auth_signals": [],
+        "endpoints": [],
+        "depends_on": [
+          {
+            "target": "loyalty-service",
+            "type": "http",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "SER_SERVICE_URL=http://localhost:8400\nORDER_SERVICE_URL=http://localhost:8100\nPRODUCT_SERVICE_URL=http://localhost:8200\nLOYALTY_SERVICE_URL=http://localhost:8300\n\n# Optional: tests will generate mock JWTs automatically if unset\nUSER_ROLE_TOKEN=\nMISSING_ROLES_"
+            }
+          },
+          {
+            "target": "order-service",
+            "type": "http",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "es not exist, the global Jest setup will create one from `.env.example`.\n\n```env\nUSER_SERVICE_URL=http://localhost:8400\nORDER_SERVICE_URL=http://localhost:8100\nPRODUCT_SERVICE_URL=http://localhost:8200\nLOYALTY_SERVICE_URL=http://localhost:8300\n\n# Optional:"
+            }
+          },
+          {
+            "target": "product-service",
+            "type": "http",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "create one from `.env.example`.\n\n```env\nUSER_SERVICE_URL=http://localhost:8400\nORDER_SERVICE_URL=http://localhost:8100\nPRODUCT_SERVICE_URL=http://localhost:8200\nLOYALTY_SERVICE_URL=http://localhost:8300\n\n# Optional: tests will generate mock JWTs automaticall"
+            }
+          },
+          {
+            "target": "user-service",
+            "type": "http",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "n from `api-tests/.env`. If the file does not exist, the global Jest setup will create one from `.env.example`.\n\n```env\nUSER_SERVICE_URL=http://localhost:8400\nORDER_SERVICE_URL=http://localhost:8100\nPRODUCT_SERVICE_URL=http://localhost:8200\nLOYALTY_SERVICE"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "full_name": "bitovi-training/loyalty-service",
+      "html_url": "https://github.com/bitovi-training/loyalty-service",
+      "description": "Loyalty Service",
+      "homepage": null,
+      "topics": [],
+      "visibility": "public",
+      "private": false,
+      "archived": false,
+      "disabled": false,
+      "fork": false,
+      "default_branch": "main",
+      "created_at": "2026-01-12T22:30:53Z",
+      "updated_at": "2026-02-12T15:20:41Z",
+      "pushed_at": "2026-02-12T15:16:14Z",
+      "license": null,
+      "open_issues_count": 0,
+      "stargazers_count": 0,
+      "watchers_count": 0,
+      "forks_count": 0,
+      "language": "TypeScript",
+      "owner": {
+        "login": "bitovi-training",
+        "type": "Organization"
+      },
+      "languages_bytes": {
+        "TypeScript": 46904,
+        "JavaScript": 1019,
+        "Dockerfile": 670
+      },
+      "files": {
+        "readme": {
+          "path": "README.md",
+          "text": "# Loyalty Service\n\nThis service manages customer loyalty points, including balance calculation,\npoint redemption, and order service integration.\n\n## Features\n\n- **Loyalty Points Management**: Track earned and redeemed points.\n- **Balance Calculation**: Real-time point balance calculation from the order service.\n- **Point Redemption**: Secure point redemption with concurrency control.\n- **Order Service Client**: HTTP client to fetch order data from the Order Service.\n- **Order Accrual Endpoint**: Record points earned on order submission.\n\n## Order Service Integration\n\nThe loyalty service includes a simple `OrderClient` class for fetching order data\nfrom the Order Service.\n\n**See [ORDER_CLIENT.md](./ORDER_CLIENT.md) for usage documentation.**\n\n## Environment Variables\n\n- `PORT` - Server port (default: 3000)\n- `ORDER_SERVICE_URL` - Order service URL (default: http://localhost:8100)\n- `USER_SERVICE_URL` - User service URL (default: http://localhost:8400)\n\n## API Endpoints\n\n- `GET /loyalty/:userId/balance` - Get loyalty balance\n- `POST /loyalty/:userId/redeem` - Redeem loyalty points\n- `GET /loyalty/:userId/redemptions` - Get redemption history\n- `POST /loyalty/orders` - Record loyalty points for an order\n\n## Project setup\n\n```bash\nnpm install\n```\n\n## Compile and run the project\n\n```bash\n# development\nnpm run start\n\n# watch mode\nnpm run start:dev\n\n# production mode\nnpm run start:prod\n```\n\n## Run tests\n\n```bash\n# unit tests\nnpm run test\n\n# e2e tests\nnpm run test:e2e\n\n# test coverage\nnpm run test:cov\n```\n"
+        },
+        "codeowners": null,
+        "catalog": null,
+        "openapi": null
+      },
+      "derived": {
+        "repo_kind": "service",
+        "env_vars": [
+          {
+            "name": "ORDER_SERVICE_URL",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": ".md](./ORDER_CLIENT.md) for usage documentation.**\n\n## Environment Variables\n\n- `PORT` - Server port (default: 3000)\n- `ORDER_SERVICE_URL` - Order service URL (default: http://localhost:8100)\n- `USER_SERVICE_URL` - User service URL (default: http://localhos"
+            }
+          },
+          {
+            "name": "PORT",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "the Order Service.\n\n**See [ORDER_CLIENT.md](./ORDER_CLIENT.md) for usage documentation.**\n\n## Environment Variables\n\n- `PORT` - Server port (default: 3000)\n- `ORDER_SERVICE_URL` - Order service URL (default: http://localhost:8100)\n- `USER_SERVI"
+            }
+          },
+          {
+            "name": "USER_SERVICE_URL",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "s\n\n- `PORT` - Server port (default: 3000)\n- `ORDER_SERVICE_URL` - Order service URL (default: http://localhost:8100)\n- `USER_SERVICE_URL` - User service URL (default: http://localhost:8400)\n\n## API Endpoints\n\n- `GET /loyalty/:userId/balance` - Get loyalty"
+            }
+          }
+        ],
+        "auth_signals": [],
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/loyalty/:userId/balance",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": ": http://localhost:8100)\n- `USER_SERVICE_URL` - User service URL (default: http://localhost:8400)\n\n## API Endpoints\n\n- `GET /loyalty/:userId/balance` - Get loyalty balance\n- `POST /loyalty/:userId/redeem` - Redeem loyalty points\n- `GET /loyalty/:userId/redemptions` -"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/loyalty/:userId/redeem",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "rvice URL (default: http://localhost:8400)\n\n## API Endpoints\n\n- `GET /loyalty/:userId/balance` - Get loyalty balance\n- `POST /loyalty/:userId/redeem` - Redeem loyalty points\n- `GET /loyalty/:userId/redemptions` - Get redemption history\n- `POST /loyalty/orders` - Recor"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/loyalty/:userId/redemptions",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "nts\n\n- `GET /loyalty/:userId/balance` - Get loyalty balance\n- `POST /loyalty/:userId/redeem` - Redeem loyalty points\n- `GET /loyalty/:userId/redemptions` - Get redemption history\n- `POST /loyalty/orders` - Record loyalty points for an order\n\n## Project setup\n\n```bash\nnpm"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/loyalty/orders",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "`POST /loyalty/:userId/redeem` - Redeem loyalty points\n- `GET /loyalty/:userId/redemptions` - Get redemption history\n- `POST /loyalty/orders` - Record loyalty points for an order\n\n## Project setup\n\n```bash\nnpm install\n```\n\n## Compile and run the project\n\n```ba"
+            }
+          }
+        ],
+        "depends_on": [
+          {
+            "target": "order-service",
+            "type": "http",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": ".md](./ORDER_CLIENT.md) for usage documentation.**\n\n## Environment Variables\n\n- `PORT` - Server port (default: 3000)\n- `ORDER_SERVICE_URL` - Order service URL (default: http://localhost:8100)\n- `USER_SERVICE_URL` - User service URL (default: http://localhos"
+            }
+          },
+          {
+            "target": "user-service",
+            "type": "http",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "s\n\n- `PORT` - Server port (default: 3000)\n- `ORDER_SERVICE_URL` - Order service URL (default: http://localhost:8100)\n- `USER_SERVICE_URL` - User service URL (default: http://localhost:8400)\n\n## API Endpoints\n\n- `GET /loyalty/:userId/balance` - Get loyalty"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "full_name": "bitovi-training/auth-middleware",
+      "html_url": "https://github.com/bitovi-training/auth-middleware",
+      "description": "Auth Middleware for TypeScript Services",
+      "homepage": null,
+      "topics": [],
+      "visibility": "public",
+      "private": false,
+      "archived": false,
+      "disabled": false,
+      "fork": false,
+      "default_branch": "main",
+      "created_at": "2026-01-12T22:30:19Z",
+      "updated_at": "2026-02-12T15:23:19Z",
+      "pushed_at": "2026-02-12T15:16:07Z",
+      "license": null,
+      "open_issues_count": 0,
+      "stargazers_count": 0,
+      "watchers_count": 0,
+      "forks_count": 0,
+      "language": "TypeScript",
+      "owner": {
+        "login": "bitovi-training",
+        "type": "Organization"
+      },
+      "languages_bytes": {
+        "TypeScript": 26836,
+        "JavaScript": 433
+      },
+      "files": {
+        "readme": {
+          "path": "README.md",
+          "text": "# NestJS Mock Authentication Middleware\n\nA lightweight NestJS authentication middleware that provides JWT-based authentication and role-based access control (RBAC) without cryptographic signature verification. Ideal for development, testing, and prototyping environments.\n\n⚠️ **WARNING**: This is a MOCK implementation that does NOT verify JWT signatures. **DO NOT use in production** without adding proper JWT verification.\n\n## Features\n\n- ✅ JWT token parsing and validation (structure and required claims)\n- ✅ User claims extraction (sub, email, roles, exp, iat)\n- ✅ Role-based access control with any-of semantics (`@Roles()`)\n- ✅ Role-based access control with all-of semantics (`@RequireAllRoles()`)\n- ✅ Structured logging with NestJS Logger\n- ✅ Custom exceptions with consistent error responses\n- ✅ TypeScript-first with strict type checking\n- ✅ Zero external dependencies for JWT parsing\n\n## Installation\n\n```bash\nnpm install @bitovi-corp/auth-middleware\n```\n\n### Peer Dependencies\n\nEnsure you have the following NestJS packages installed:\n\n```bash\nnpm install @nestjs/common@^11.0.0 @nestjs/core@^11.0.0 reflect-metadata rxjs\n```\n\n## Quick Start\n\n### 1. Import the AuthModule\n\n```typescript\nimport { Module } from '@nestjs/common';\nimport { AuthModule } from '@bitovi-corp/auth-middleware';\n\n@Module({\n  imports: [AuthModule],\n  controllers: [AppController],\n})\nexport class AppModule {}\n```\n\n### 2. Protect Routes with AuthGuard\n\n```typescript\nimport { Controller, Get, UseGuards } from '@nestjs/common';\nimport { AuthGuard, User, UserClaims } from '@bitovi-corp/auth-middleware';\n\n@Controller('api')\n@UseGuards(AuthGuard)\nexport class ApiController {\n  @Get('profile')\n  getProfile(@User() user: UserClaims) {\n    return {\n      id: user.sub,\n      email: user.email,\n      roles: user.roles,\n    };\n  }\n}\n```\n\n### 3. Add Role-Based Access Control\n\n#### Any-Of Semantics (User needs ONE of the specified roles)\n\n```typescript\nimport { Controller, Get, UseGuards } from '@nestjs/common';\nimport { AuthGuard, RequireRolesGuard, Roles } from '@bitovi-corp/auth-middleware';\n\n@Controller('admin')\n@UseGuards(AuthGuard, RequireRolesGuard)\nexport class AdminController {\n  @Get('dashboard')\n  @Roles('admin', 'moderator')\n  getDashboard() {\n    // User with 'admin' OR 'moderator' role can access\n    return { message: 'Admin dashboard' };\n  }\n}\n```\n\n#### All-Of Semantics (User needs ALL specified roles)\n\n```typescript\nimport { Controller, Delete, UseGuards } from '@nestjs/common';\nimport { AuthGuard, RequireAllRolesGuard, RequireAllRoles } from '@bitovi-corp/auth-middleware';\n\n@Controller('admin')\n@UseGuards(AuthGuard, RequireAllRolesGuard)\nexport class AdminController {\n  @Delete('critical-operation')\n  @RequireAllRoles('admin', 'superuser')\n  criticalOperation() {\n    // User must have BOTH 'admin' AND 'superuser' roles\n    return { message: 'Operation complete' };\n  }\n}\n```\n\n## API Reference\n\n### Guards\n\n#### `AuthGuard`\n\nValidates JWT tokens and attaches user claims to the request.\n\n- Extracts Bearer token from `Authorization` header\n- Parses JWT payload and validates structure\n- Attaches `UserClaims` to `request.user`\n- Throws `InvalidTokenException` (401) if token is missing or invalid\n\n#### `RequireRolesGuard`\n\nEnforces any-of role semantics. User must have at least ONE of the specified roles.\n\n- Reads roles from `@Roles()` decorator\n- Throws `InsufficientPermissionsException` (403) if user lacks all required roles\n- Must be used after `AuthGuard`\n\n#### `RequireAllRolesGuard`\n\nEnforces all-of role semantics. User must have ALL of the specified roles.\n\n- Reads roles from `@RequireAllRoles()` decorator\n- Throws `InsufficientPermissionsException` (403) if user lacks any required role\n- Must be used after `AuthGuard`\n\n### Decorators\n\n#### `@User(property?: keyof UserClaims)`\n\nParameter decorator to extract user claims from request.\n\n```typescript\n// Get entire UserClaims object\n@Get('profile')\ngetProfile(@User() user: UserClaims) { }\n\n// Get specific property\n@Get('email')\ngetEmail(@User('email') email: string) { }\n\n@Get('roles')\ngetRoles(@User('roles') roles: string[]) { }\n```\n\n#### `@Roles(...roles: string[])`\n\nRoute decorator for any-of role requirements.\n\n```typescript\n@Roles('admin', 'moderator')\n@Get('dashboard')\ngetDashboard() { }\n```\n\n#### `@RequireAllRoles(...roles: string[])`\n\nRoute decorator for all-of role requirements.\n\n```typescript\n@RequireAllRoles('admin', 'superuser')\n@Delete('critical')\ncriticalOperation() { }\n```\n\n### Interfaces\n\n#### `UserClaims`\n\n```typescript\ninterface UserClaims {\n  sub: string;        // User ID (required)\n  email: string;      // User email (required)\n  roles: string[];    // User roles (defaults to [] if missing)\n  exp?: number;       // Token expiration (Unix timestamp)\n  iat?: number;       // Token issued at (Unix timestamp)\n}\n```\n\n### Exceptions\n\n#### `InvalidTokenException` (401 Unauthorized)\n\nThrown when:\n- Authorization header is missing\n- Token format is invalid (not Bearer scheme or not 3 parts)\n- Token payload cannot be decoded\n- Required claims (sub, email) are missing\n\n#### `InsufficientPermissionsException` (403 Forbidden)\n\nThrown when:\n- User lacks required roles\n\n## Token Format\n\nThe middleware expects JWT tokens in the `Authorization` header with Bearer scheme:\n\n```\nAuthorization: Bearer <token>\n```\n\nToken structure (3 parts separated by dots):\n\n```\n<header>.<payload>.<signature>\n```\n\nExample payload:\n\n```json\n{\n  \"sub\": \"user-123\",\n  \"email\": \"user@example.com\",\n  \"roles\": [\"admin\", \"user\"],\n  \"exp\": 1735689600,\n  \"iat\": 1735603200\n}\n```\n\n## Edge Cases & Behavior\n\n### Missing Roles Claim\n\nIf the `roles` claim is missing or not an array, defaults to empty array `[]` (permissive behavior).\n\n### Expired Tokens\n\nExpired tokens (where `exp < current time`) are **ACCEPTED** with a warning log. This is intentional for development environments.\n\n### Role Case Sensitivity\n\nRole comparisons are **case-sensitive**:\n- `\"admin\"` ≠ `\"Admin\"` ≠ `\"ADMIN\"`\n\n### Empty Roles Decorator\n\nIf `@Roles()` or `@RequireAllRoles()` is used with no arguments, the guard allows access (no roles required).\n\n## Logging\n\nThe middleware uses NestJS Logger with structured JSON output:\n\n```typescript\n// Authentication success\n{\n  \"level\": \"log\",\n  \"message\": \"Authentication successful\",\n  \"userId\": \"user-123\",\n  \"email\": \"user@example.com\",\n  \"rolesCount\": 2,\n  \"path\": \"/api/profile\",\n  \"method\": \"GET\"\n}\n\n// Authorization failure\n{\n  \"level\": \"warn\",\n  \"message\": \"Authorization failed: insufficient roles\",\n  \"userId\": \"user-123\",\n  \"userRoles\": [\"user\"],\n  \"requiredRoles\": [\"admin\", \"moderator\"],\n  \"path\": \"/admin/dashboard\",\n  \"method\": \"GET\"\n}\n```\n\n**Security**: Logs contain user IDs and role counts but **NOT** JWT tokens or sensitive claim data.\n\n## Production Migration\n\n⚠️ **This middleware does NOT verify JWT signatures** and should only be used in development/testing environments.\n\nFor production use, you must:\n\n1. **Add signature verification** using a library like `jsonwebtoken` or `passport-jwt`\n2. **Validate token issuer** (iss claim) against trusted issuers\n3. **Validate audience** (aud claim) to prevent token misuse\n4. **Use HTTPS** for all API endpoints\n5. **Implement token rotation** and revocation mechanisms\n6. **Add rate limiting** to prevent brute force attacks\n7. **Store secrets securely** (environment variables, secret managers)\n\nSee [quickstart.md](./specs/001-nestjs-mock-auth/quickstart.md) for detailed production migration guidance.\n\n## Requirements\n\n- **Node.js**: v20 LTS (minimum v16+)\n- **NestJS**: v11.x\n- **TypeScript**: v5.x\n\n## Development\n\n```bash\n# Install dependencies\nnpm install\n\n# Build\nnpm run build\n\n# Run tests\nnpm test\n\n# Run tests with coverage\nnpm run test:cov\n```\n\n## License\n\nMIT\n\n## Contributing\n\nContributions are welcome! Please ensure:\n- All code passes TypeScript strict mode\n- Unit tests achieve 90%+ coverage\n- JSDoc comments for all public APIs\n- No sensitive data in logs\n\n## Support\n\nFor issues and questions, please file a GitHub issue.\n\n---\n\n**Remember**: This is a MOCK authentication middleware. Do not use in production without proper JWT signature verification.\n"
+        },
+        "codeowners": null,
+        "catalog": null,
+        "openapi": null
+      },
+      "derived": {
+        "repo_kind": "library",
+        "env_vars": [],
+        "auth_signals": [
+          {
+            "signal": "AuthGuard",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "{\n  imports: [AuthModule],\n  controllers: [AppController],\n})\nexport class AppModule {}\n```\n\n### 2. Protect Routes with AuthGuard\n\n```typescript\nimport { Controller, Get, UseGuards } from '@nestjs/common';\nimport { AuthGuard, User, UserClaims } from"
+            }
+          },
+          {
+            "signal": "RequireRolesGuard",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "of the specified roles)\n\n```typescript\nimport { Controller, Get, UseGuards } from '@nestjs/common';\nimport { AuthGuard, RequireRolesGuard, Roles } from '@bitovi-corp/auth-middleware';\n\n@Controller('admin')\n@UseGuards(AuthGuard, RequireRolesGuard)\nexport cla"
+            }
+          },
+          {
+            "signal": "RequireAllRolesGuard",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "ALL specified roles)\n\n```typescript\nimport { Controller, Delete, UseGuards } from '@nestjs/common';\nimport { AuthGuard, RequireAllRolesGuard, RequireAllRoles } from '@bitovi-corp/auth-middleware';\n\n@Controller('admin')\n@UseGuards(AuthGuard, RequireAllRolesGuar"
+            }
+          },
+          {
+            "signal": "@Roles",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "claims)\n- ✅ User claims extraction (sub, email, roles, exp, iat)\n- ✅ Role-based access control with any-of semantics (`@Roles()`)\n- ✅ Role-based access control with all-of semantics (`@RequireAllRoles()`)\n- ✅ Structured logging with NestJS Logge"
+            }
+          },
+          {
+            "signal": "@RequireAllRoles",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "- ✅ Role-based access control with any-of semantics (`@Roles()`)\n- ✅ Role-based access control with all-of semantics (`@RequireAllRoles()`)\n- ✅ Structured logging with NestJS Logger\n- ✅ Custom exceptions with consistent error responses\n- ✅ TypeScript-firs"
+            }
+          },
+          {
+            "signal": "RequireAllRoles(",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "- ✅ Role-based access control with any-of semantics (`@Roles()`)\n- ✅ Role-based access control with all-of semantics (`@RequireAllRoles()`)\n- ✅ Structured logging with NestJS Logger\n- ✅ Custom exceptions with consistent error responses\n- ✅ TypeScript-first"
+            }
+          }
+        ],
+        "endpoints": [],
+        "depends_on": []
+      }
+    },
+    {
+      "full_name": "bitovi-training/auth-middleware-go",
+      "html_url": "https://github.com/bitovi-training/auth-middleware-go",
+      "description": "Auth Middleware for Go Services",
+      "homepage": null,
+      "topics": [],
+      "visibility": "public",
+      "private": false,
+      "archived": false,
+      "disabled": false,
+      "fork": false,
+      "default_branch": "main",
+      "created_at": "2026-01-12T22:26:33Z",
+      "updated_at": "2026-02-12T15:24:28Z",
+      "pushed_at": "2026-02-12T15:16:11Z",
+      "license": null,
+      "open_issues_count": 0,
+      "stargazers_count": 0,
+      "watchers_count": 0,
+      "forks_count": 1,
+      "language": "Go",
+      "owner": {
+        "login": "bitovi-training",
+        "type": "Organization"
+      },
+      "languages_bytes": {
+        "Go": 17248
+      },
+      "files": {
+        "readme": {
+          "path": "README.md",
+          "text": "# Auth Middleware Go\n\nA reusable Go middleware package for Bearer token authentication and role-based access control (RBAC) in HTTP services.\n\n## Features\n\n- Bearer token validation\n- Role-based access control (RBAC)\n- JWT claims parsing (mock mode for development)\n- User context management\n- Standard error responses\n- Easy integration with any Go HTTP handler\n- Comprehensive test coverage\n\n## Installation\n\n```bash\ngo get github.com/bitovi-corp/auth-middleware-go\n```\n\n## Usage\n\n### Basic Authentication\n\nValidate Bearer tokens without role checks:\n\n```go\nimport (\n    authmiddleware \"github.com/bitovi-corp/auth-middleware-go/middleware\"\n)\n\nfunc main() {\n    http.HandleFunc(\"/protected\", authmiddleware.AuthMiddleware(yourHandler))\n    http.ListenAndServe(\":8080\", nil)\n}\n```\n\n### Role-Based Access Control\n\nRequire specific roles for endpoints:\n\n```go\n// Require admin role\nhttp.HandleFunc(\"/admin\", authmiddleware.RequireRoles(\"admin\")(adminHandler))\n\n// Require admin OR moderator role (any-of)\nhttp.HandleFunc(\"/moderate\", authmiddleware.RequireRoles(\"admin\", \"moderator\")(moderateHandler))\n\n// Require BOTH admin AND superuser roles (all-of)\nhttp.HandleFunc(\"/critical\", authmiddleware.RequireAllRoles(\"admin\", \"superuser\")(criticalHandler))\n```\n\n### Accessing User Claims\n\nAccess authenticated user information in your handlers:\n\n```go\nfunc yourHandler(w http.ResponseWriter, r *http.Request) {\n    claims := authmiddleware.GetUserClaims(r)\n    if claims != nil {\n        fmt.Printf(\"User ID: %s\\n\", claims.Subject)\n        fmt.Printf(\"Email: %s\\n\", claims.Email)\n        fmt.Printf(\"Roles: %v\\n\", claims.Roles)\n    }\n    // ... rest of handler logic\n}\n```\n\n## Authentication\n\nThe middleware expects an `Authorization` header with a Bearer token:\n\n```\nAuthorization: Bearer <your-jwt-token>\n```\n\n### JWT Token Structure\n\nExpected JWT payload format:\n\n```json\n{\n  \"sub\": \"user-id-123\",\n  \"email\": \"user@example.com\",\n  \"roles\": [\"user\", \"admin\"],\n  \"exp\": 1234567890\n}\n```\n\n### Validation Rules\n\n- Token must be at least 20 characters long (basic validation)\n- Token must be a valid JWT with 3 parts (header.payload.signature)\n- JWT payload must be valid JSON\n- **Note:** In mock mode, signature is NOT verified (suitable for development/testing)\n- For production, implement proper JWT signature validation\n\n## Error Responses\n\nThe middleware returns JSON error responses with appropriate HTTP status codes:\n\n### 401 Unauthorized\n\n```json\n{\n  \"code\": \"MISSING_TOKEN\",\n  \"message\": \"Authorization header is required\"\n}\n```\n\n**Error Codes:**\n- `MISSING_TOKEN`: Authorization header not provided\n- `INVALID_TOKEN_FORMAT`: Header format is incorrect\n- `EMPTY_TOKEN`: Token value is empty\n- `INVALID_TOKEN`: Token failed validation or unable to parse claims\n\n### 403 Forbidden\n\n```json\n{\n  \"code\": \"INSUFFICIENT_PERMISSIONS\",\n  \"message\": \"User does not have required role(s): admin\"\n}\n```\n\n**Error Codes:**\n- `INSUFFICIENT_PERMISSIONS`: User lacks required role(s)\n\n## API Reference\n\n### Middleware Functions\n\n#### `AuthMiddleware(next http.HandlerFunc) http.HandlerFunc`\nBasic authentication middleware that validates Bearer tokens and parses JWT claims.\n\n#### `RequireRoles(roles ...string) func(http.HandlerFunc) http.HandlerFunc`\nWraps AuthMiddleware and requires the user to have at least one of the specified roles.\n\n#### `RequireAllRoles(roles ...string) func(http.HandlerFunc) http.HandlerFunc`\nWraps AuthMiddleware and requires the user to have all of the specified roles.\n\n#### `GetUserClaims(r *http.Request) *UserClaims`\nRetrieves the authenticated user's claims from the request context.\n\n### Types\n\n#### `UserClaims`\n```go\ntype UserClaims struct {\n    Subject   string   `json:\"sub\"`      // User ID\n    Email     string   `json:\"email\"`    // User email\n    Roles     []string `json:\"roles\"`    // User roles\n    ExpiresAt int64    `json:\"exp\"`      // Token expiration (Unix timestamp)\n}\n```\n\n## Examples\n\n### Example 1: Public and Protected Endpoints\n\n```go\nfunc main() {\n    // Public endpoint - no authentication\n    http.HandleFunc(\"/api/public\", publicHandler)\n    \n    // Protected endpoint - requires valid token\n    http.HandleFunc(\"/api/profile\", authmiddleware.AuthMiddleware(profileHandler))\n    \n    // Admin only endpoint\n    http.HandleFunc(\"/api/admin/users\", authmiddleware.RequireRoles(\"admin\")(adminHandler))\n    \n    http.ListenAndServe(\":8080\", nil)\n}\n```\n\n### Example 2: Role-Based Order Management\n\n```go\n// Any authenticated user can list orders\nhttp.HandleFunc(\"/api/orders\", authmiddleware.AuthMiddleware(listOrdersHandler))\n\n// Support staff or admins can cancel orders\nhttp.HandleFunc(\"/api/orders/cancel\", authmiddleware.RequireRoles(\"support\", \"admin\")(cancelOrderHandler))\n\n// Only admins can issue refunds\nhttp.HandleFunc(\"/api/orders/refund\", authmiddleware.RequireRoles(\"admin\")(refundOrderHandler))\n```\n\n### Example 3: Using Claims to Filter Data\n\n```go\nfunc ordersHandler(w http.ResponseWriter, r *http.Request) {\n    claims := authmiddleware.GetUserClaims(r)\n    \n    var orders []Order\n    \n    // Check if user has admin role\n    isAdmin := false\n    for _, role := range claims.Roles {\n        if role == \"admin\" {\n            isAdmin = true\n            break\n        }\n    }\n    \n    if isAdmin {\n        // Admins see all orders\n        orders = orderService.GetAllOrders()\n    } else {\n        // Regular users see only their orders\n        orders = orderService.GetUserOrders(claims.Subject)\n    }\n    \n    json.NewEncoder(w).Encode(orders)\n}\n```\n\n## Development\n\n### Running Tests\n\n```bash\ngo test ./...\n```\n\n### Running Tests with Verbose Output\n\n```bash\ngo test ./... -v\n```\n\n## Security Considerations\n\n⚠️ **Important:** This implementation uses mock JWT validation for development purposes. The JWT signature is NOT verified. This is suitable for:\n\n- Development and testing environments\n- Internal services with trusted token sources\n- Prototyping and demonstrations\n\nFor production use, you should:\n1. Implement proper JWT signature verification using a library like `github.com/golang-jwt/jwt`\n2. Validate token expiration (`exp` claim)\n3. Verify token issuer (`iss` claim)\n4. Use HTTPS for all communications\n5. Implement token refresh mechanisms\n6. Consider using established auth providers (OAuth2, OIDC)\n\n## Documentation\n\nFor detailed implementation specifications, see [spec/00-rbac.md](spec/00-rbac.md)\n\n## License\n\nMIT\n"
+        },
+        "codeowners": null,
+        "catalog": null,
+        "openapi": null
+      },
+      "derived": {
+        "repo_kind": "library",
+        "env_vars": [
+          {
+            "name": "EMPTY_TOKEN",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "r Codes:**\n- `MISSING_TOKEN`: Authorization header not provided\n- `INVALID_TOKEN_FORMAT`: Header format is incorrect\n- `EMPTY_TOKEN`: Token value is empty\n- `INVALID_TOKEN`: Token failed validation or unable to parse claims\n\n### 403 Forbidden\n\n```json"
+            }
+          },
+          {
+            "name": "INVALID_TOKEN",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "ge\": \"Authorization header is required\"\n}\n```\n\n**Error Codes:**\n- `MISSING_TOKEN`: Authorization header not provided\n- `INVALID_TOKEN_FORMAT`: Header format is incorrect\n- `EMPTY_TOKEN`: Token value is empty\n- `INVALID_TOKEN`: Token failed validation or"
+            }
+          },
+          {
+            "name": "MISSING_TOKEN",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "middleware returns JSON error responses with appropriate HTTP status codes:\n\n### 401 Unauthorized\n\n```json\n{\n  \"code\": \"MISSING_TOKEN\",\n  \"message\": \"Authorization header is required\"\n}\n```\n\n**Error Codes:**\n- `MISSING_TOKEN`: Authorization header not p"
+            }
+          }
+        ],
+        "auth_signals": [
+          {
+            "signal": "AuthMiddleware",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "-middleware-go\n```\n\n## Usage\n\n### Basic Authentication\n\nValidate Bearer tokens without role checks:\n\n```go\nimport (\n    authmiddleware \"github.com/bitovi-corp/auth-middleware-go/middleware\"\n)\n\nfunc main() {\n    http.HandleFunc(\"/protected\", authmiddlewar"
+            }
+          },
+          {
+            "signal": "RequireRoles(",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "ss Control\n\nRequire specific roles for endpoints:\n\n```go\n// Require admin role\nhttp.HandleFunc(\"/admin\", authmiddleware.RequireRoles(\"admin\")(adminHandler))\n\n// Require admin OR moderator role (any-of)\nhttp.HandleFunc(\"/moderate\", authmiddleware.Require"
+            }
+          },
+          {
+            "signal": "RequireAllRoles(",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "tor\")(moderateHandler))\n\n// Require BOTH admin AND superuser roles (all-of)\nhttp.HandleFunc(\"/critical\", authmiddleware.RequireAllRoles(\"admin\", \"superuser\")(criticalHandler))\n```\n\n### Accessing User Claims\n\nAccess authenticated user information in your ha"
+            }
+          }
+        ],
+        "endpoints": [],
+        "depends_on": []
+      }
+    },
+    {
+      "full_name": "bitovi-training/order-service",
+      "html_url": "https://github.com/bitovi-training/order-service",
+      "description": null,
+      "homepage": null,
+      "topics": [],
+      "visibility": "public",
+      "private": false,
+      "archived": false,
+      "disabled": false,
+      "fork": false,
+      "default_branch": "main",
+      "created_at": "2026-01-09T16:33:52Z",
+      "updated_at": "2026-02-12T15:27:47Z",
+      "pushed_at": "2026-02-12T15:16:18Z",
+      "license": null,
+      "open_issues_count": 0,
+      "stargazers_count": 0,
+      "watchers_count": 0,
+      "forks_count": 1,
+      "language": "Go",
+      "owner": {
+        "login": "bitovi-training",
+        "type": "Organization"
+      },
+      "languages_bytes": {
+        "Go": 96712,
+        "Shell": 47260,
+        "Python": 6067,
+        "Dockerfile": 745
+      },
+      "files": {
+        "readme": {
+          "path": "README.md",
+          "text": "# Example Go Server\n\nA Go HTTP API server demonstrating e-commerce order management functionality. This project follows a contract-first approach with OpenAPI specification and implements user management, product catalog, and order workflow features.\n\n**Constitutional Compliance**: ✅ 100% Compliant (v1.0.1) | [View Constitution](.specify/memory/constitution.md)\n\n## Table of Contents\n\n- [Architecture](#architecture)\n- [Features](#features)\n- [Getting Started](#getting-started)\n- [API Documentation](#api-documentation)\n- [Project Structure](#project-structure)\n- [Development](#development)\n- [Testing](#testing)\n- [Design Patterns](#design-patterns)\n- [Constitutional Principles](#constitutional-principles)\n\n## Architecture\n\nThis project follows standard Go project layout with clear separation of concerns:\n\n```\nexample-go-server/\n├── api/                    # API contracts (OpenAPI specification)\n├── cmd/server/            # Application entry point\n├── internal/              # Private application code\n│   ├── handlers/          # HTTP request handlers\n│   ├── middleware/        # HTTP middleware (auth, logging)\n│   ├── models/           # Data structures\n│   └── services/         # Business logic layer\n└── tests/integration/    # Integration tests\n```\n\n**Key Principle**: The OpenAPI specification (`api/openapi.yaml`) is the source of truth for all API contracts.\n\n## Features\n\n### User Management\nUser management endpoints are now owned by user-service; order-service no longer persists user profiles.\n\n### Product Catalog\n- Browse available products\n- View product details including pricing\n- Pre-configured catalog with 5 sample products\n\n### Order Management\n- Create orders with multiple products (requires userId)\n- Update order products (additive/subtractive quantities)\n- Submit orders to lock for processing\n- Track order status (PENDING → PROCESSING → SHIPPED → DELIVERED)\n- Cancel orders via submit endpoint\n- Loyalty points are calculated and stored by loyalty-service on order submission\n\n### Authentication & Middleware\n- JWT Bearer token authentication (simplified for demo)\n- Request/response logging middleware\n- Standardized error responses\n\n## Getting Started\n\n### Prerequisites\n\n- Go 1.25.5 or higher\n- Git\n\n### Installation\n\n1. Clone the repository:\n```bash\ngit clone https://github.com/Bitovi/example-go-server.git\ncd example-go-server\n```\n\n2. Install dependencies:\n```bash\ngo mod download\n```\n\n3. Run the server:\n```bash\ngo run cmd/server/main.go\n```\n\nThe server will start on `http://localhost:8080`\n\n### Quick Test\n\n```bash\n# Health check\ncurl http://localhost:8080/health\n\n# List products (requires auth)\ncurl -H \"Authorization: Bearer valid_test_token_1234567890\" \\\n     http://localhost:8080/products\n```\n\n## API Documentation\n\nThe complete API specification is defined in `api/openapi.yaml`. Key endpoints:\n\n### Health\n- `GET /health` - Server health check (no auth required)\n\n### Users\n- User endpoints have been removed from order-service; use user-service and loyalty-service.\n\n### Products\n- `GET /products` - List all products\n- `GET /products/{productId}` - Get product details\n\n### Orders\n- `GET /orders` - List all orders\n- `POST /orders` - Create a new order (requires userId)\n- `GET /orders/{orderId}` - Get order details\n- `PATCH /orders/{orderId}` - Update order products (PENDING orders only)\n- `POST /orders/{orderId}/submit` - Submit or cancel an order\n\n### Authentication\n\nAll endpoints (except `/health`) require a Bearer token in the Authorization header:\n\n```\nAuthorization: Bearer <your-token-here>\n```\n\nFor development/testing, any token with 20+ characters is accepted.\n\n## Project Structure\n\n### `/api`\nContains the OpenAPI specification that defines all API contracts.\n\n### `/cmd/server`\nApplication entry point with server initialization and route configuration.\n\n### `/internal/handlers`\nHTTP request handlers that:\n- Validate request parameters and body\n- Call service layer for business logic\n- Format and return HTTP responses\n- Use standardized error responses\n\n### `/internal/middleware`\nHTTP middleware components:\n- **AuthMiddleware**: Validates Bearer tokens\n- **LoggingMiddleware**: Logs all requests and responses\n\n### `/internal/models`\nData structures representing:\n- Products (catalog items)\n- Orders (with products, status, accrued loyalty points)\n- Error responses\n\n### `/internal/services`\nBusiness logic layer with mock data storage:\n- **ProductService**: Product catalog access\n- **OrderService**: Order lifecycle management, price calculation\n\n### `/tests/integration`\nEnd-to-end integration tests validating complete workflows.\n\n## Development\n\n### Adding New Endpoints\n\n1. **Define in OpenAPI spec** (`api/openapi.yaml`)\n   ```yaml\n   /new-endpoint:\n     get:\n       summary: Description\n       responses:\n         '200':\n           description: Success\n   ```\n\n2. **Create handler** (`internal/handlers/`)\n   ```go\n   func NewEndpoint(w http.ResponseWriter, r *http.Request) {\n       // Implementation\n   }\n   ```\n\n3. **Wire up route** (`cmd/server/main.go`)\n   ```go\n   http.Handle(\"/new-endpoint\", middleware.AuthMiddleware(\n       middleware.LoggingMiddleware(http.HandlerFunc(handlers.NewEndpoint))))\n   ```\n\n4. **Add business logic** (`internal/services/`) if needed\n\n### Code Conventions\n\n- **Error Handling**: Return errors up the call stack, handle in handlers\n- **HTTP Status Codes**: Match OpenAPI response definitions\n- **Handlers**: Keep thin - delegate to services\n- **Models**: Define data structures, not behavior\n- **Logging**: Use standard log package with prefixes\n\n## Testing\n\n### Run All Tests\n```bash\ngo test ./...\n```\n\n### Run Specific Package Tests\n```bash\ngo test ./internal/handlers\ngo test ./internal/middleware\ngo test ./tests/integration\n```\n\n### Run with Verbose Output\n```bash\ngo test -v ./...\n```\n\n### Run Multiple Times (Test Stability)\n```bash\ngo test ./... -count=3\n```\n\n### Clean Test Cache\n```bash\ngo clean -testcache\n```\n\n### Test Structure\n\n- **Unit Tests**: Located alongside source files (`*_test.go`)\n- **Integration Tests**: Located in `/tests/integration`\n- **Mock Data Reset**: Each test resets mock data for isolation\n- **Table-Driven Tests**: Most tests use table-driven patterns\n\n## Design Patterns\n\n### Mock Data Reset\nTests use reset functions to ensure isolation:\n```go\nfunc TestSomething(t *testing.T) {\n    resetMockData()  // Resets to initial state\n    // Test implementation\n}\n```\n\n### Middleware Pattern\nAll protected routes use middleware composition:\n```go\nhttp.HandleFunc(\"/endpoint\", \n    middleware.LoggingMiddleware(\n        middleware.AuthMiddleware(handlers.Handler)))\n```\n\n### Error Response Standardization\nAll errors use consistent format:\n```go\nwriteErrorResponse(w, http.StatusBadRequest, \n    \"ERROR_CODE\", \"Error message\")\n```\n\n### Additive/Subtractive Order Updates\nPATCH operations on orders use quantity arithmetic:\n- `quantity > 0`: Add to existing quantity\n- `quantity < 0`: Subtract from existing quantity (removes if result ≤ 0)\n- `quantity = 0`: No change\n\n### Loyalty Points\n- Calculated and stored by loyalty-service on order submission\n- Order-service forwards order totals to loyalty-service for accrual\n\n### Cascade Operations\n- User deletion is handled by user-service; order-service no longer exposes user endpoints\n\n## Constitutional Principles\n\nThis project adheres to a formal constitution (v1.0.1) that defines core development principles:\n\n1. **Contract-First Development** - OpenAPI spec is the source of truth\n2. **Standard Go Project Layout** - Clear separation of concerns\n3. **Test Coverage & Isolation** - Comprehensive unit and integration tests\n4. **Middleware Composition** - Consistent auth and logging patterns\n5. **Standard Error Handling** - Uniform error response format\n\n**Compliance Status**: ✅ 100% Compliant  \n**Documentation**: [Constitution](.specify/memory/constitution.md) | [Compliance Report](.specify/memory/constitution-compliance-report.md)\n\n### Validation\n\nValidate constitutional compliance:\n```bash\n# Validate OpenAPI specification\npython3 .specify/scripts/validate-openapi.py\n\n# Run all tests\ngo test ./...\n```\n\n## Dependencies\n\n- **github.com/google/uuid** (v1.6.0) - UUID generation and validation\n\n## Contributing\n\n1. Follow the existing code structure and conventions\n2. **Update OpenAPI spec before implementing new endpoints** (Constitutional Principle I)\n3. Add tests for new functionality (Constitutional Principle III)\n4. Ensure all tests pass before submitting changes\n5. Validate OpenAPI spec compliance\n\n## Contact\n\n**Maintainer**: Bitovi Support  \n**Email**: support@bitovi.com\n\n## License\n\nCopyright © 2026 Bitovi\n"
+        },
+        "codeowners": null,
+        "catalog": null,
+        "openapi": {
+          "path": "api/openapi.yaml",
+          "text": "openapi: 3.1.0\ninfo:\n  title: Order Service API\n  version: 1.0.0\n  description: |\n    This API provides order management functionality.\n\n    **Global Middlewares:**\n    - Logging: All requests are logged with request/response details.\n    \n    **External Service Dependencies:**\n    - Product Service: Used for product information and pricing (via PRODUCT_SERVICE_URL)\n    - Loyalty Service: Used for managing customer loyalty points (via LOYALTY_SERVICE_URL)\ncontact:\n  name: Bitovi Support\n  email: support@bitovi.com\n\nservers:\n  - url: http://localhost:8080\n    description: Local development server\n\nsecurity:\n  - {}\n\npaths:\n  /health:\n    get:\n      summary: Health check endpoint\n      operationId: healthCheck\n      responses:\n        '200':\n          description: Server is healthy\n  \n  /orders:\n    get:\n      summary: Retrieve a list of orders\n      description: |\n        Retrieves a list of all orders in the system\n\n        **Middlewares applied:**\n        - Authentication required (admin role)\n      operationId: listOrders\n      tags:\n        - Orders\n      security:\n        - bearerAuth: []\n      responses:\n        '200':\n          description: Successfully retrieved list of orders\n          content:\n            application/json:\n              schema:\n                type: object\n                required:\n                  - orders\n                  - total\n                properties:\n                  orders:\n                    type: array\n                    items:\n                      $ref: '#/components/schemas/Order'\n                  total:\n                    type: integer\n                    description: Total number of orders available\n        '401':\n          description: Unauthorized - Invalid or missing authentication token\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n        '500':\n          description: Internal server error\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n    post:\n      summary: Create a new order\n      description: |\n        Creates a new order in the system\n\n        **Middlewares applied:**\n        - Authentication required (admin role)\n      operationId: createOrder\n      tags:\n        - Orders\n      security:\n        - bearerAuth: []\n      requestBody:\n        description: Order details\n        required: true\n        content:\n          application/json:\n            schema:\n              type: object\n              required:\n                - userId\n                - products\n              properties:\n                userId:\n                  type: string\n                  format: uuid\n                  description: Unique identifier for the user placing the order\n                products:\n                  type: array\n                  description: List of products in the order with their quantities\n                  minItems: 1\n                  items:\n                    type: object\n                    required:\n                      - productId\n                      - quantity\n                    properties:\n                      productId:\n                        type: string\n                        format: uuid\n                        description: Unique identifier for the product\n                      quantity:\n                        type: integer\n                        description: Quantity of the product ordered\n                        minimum: 1\n      responses:\n        '201':\n          description: Successfully created order\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Order'\n        '400':\n          description: Invalid order data\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n        '401':\n          description: Unauthorized - Invalid or missing authentication token\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n        '500':\n          description: Internal server error\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n  \n  /orders/{orderId}:\n    get:\n      summary: Get order by ID\n      description: |\n        Retrieves a single order by its unique identifier\n\n        **Middlewares applied:**\n        - Authentication required (admin role)\n      operationId: getOrderById\n      tags:\n        - Orders\n      security:\n        - bearerAuth: []\n      parameters:\n        - name: orderId\n          in: path\n          description: Unique identifier of the order\n          required: true\n          schema:\n            type: string\n            format: uuid\n      responses:\n        '200':\n          description: Successfully retrieved order\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Order'\n        '401':\n          description: Unauthorized - Invalid or missing authentication token\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n        '404':\n          description: Order not found\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n        '400':\n          description: Invalid order ID format\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n        '500':\n          description: Internal server error\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n    patch:\n      summary: Update an existing order\n      description: |\n        Updates products in an existing PENDING order. Only pending orders can be updated.\n\n        **Middlewares applied:**\n        - Authentication required (admin role)\n      operationId: updateOrder\n      tags:\n        - Orders\n      security:\n        - bearerAuth: []\n      parameters:\n        - name: orderId\n          in: path\n          description: Unique identifier of the order to update\n          required: true\n          schema:\n            type: string\n            format: uuid\n      requestBody:\n        description: Updated order details\n        required: true\n        content:\n          application/json:\n            schema:\n              type: object\n              required:\n                - products\n              properties:\n                products:\n                  type: array\n                  description: List of products to add/update/remove in the order\n                  minItems: 1\n                  items:\n                    type: object\n                    required:\n                      - productId\n                      - quantity\n                    properties:\n                      productId:\n                        type: string\n                        format: uuid\n                        description: Unique identifier for the product\n                      quantity:\n                        type: integer\n                        description: |\n                          Quantity change for the product:\n                          - Positive: Add quantity to existing or create new product line\n                          - Negative: Subtract quantity from existing (removes if result <= 0)\n                          - Zero: No change\n      responses:\n        '200':\n          description: Successfully updated order\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Order'\n        '400':\n          description: Invalid order data or order cannot be updated (not pending)\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n        '401':\n          description: Unauthorized - Invalid or missing authentication token\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n        '404':\n          description: Order not found\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n        '500':\n          description: Internal server error\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n  \n  /orders/{orderId}/submit:\n    post:\n      summary: Cancel or submit an order\n      description: |\n        Cancels or submits an existing order. Submitting changes status to PROCESSING and triggers loyalty-service accrual.\n\n        **Middlewares applied:**\n        - Authentication required (admin role)\n      operationId: cancelOrSubmitOrder\n      tags:\n        - Orders\n      security:\n        - bearerAuth: []\n      parameters:\n        - name: orderId\n          in: path\n          description: Unique identifier of the order to cancel or submit\n          required: true\n          schema:\n            type: string\n            format: uuid\n      requestBody:\n        description: Action to perform on the order\n        required: true\n        content:\n          application/json:\n            schema:\n              type: object\n              required:\n                - action\n              properties:\n                action:\n                  type: string\n                  description: Action to perform on the order\n                  enum:\n                    - CANCEL\n                    - SUBMIT\n      responses:\n        '200':\n          description: Successfully performed action on order\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Order'\n        '400':\n          description: Invalid action or order data\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n        '401':\n          description: Unauthorized - Invalid or missing authentication token\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n        '404':\n          description: Order not found\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n        '500':\n          description: Internal server error\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n\ncomponents:\n  securitySchemes:\n    bearerAuth:\n      type: http\n      scheme: bearer\n      bearerFormat: JWT\n      description: JWT token authentication. Include the token in the Authorization header as \"Bearer {token}\"\n  \n  schemas:\n    Order:\n      type: object\n      required:\n        - id\n        - userId\n        - products\n        - totalPrice\n        - status\n      properties:\n        id:\n          type: string\n          format: uuid\n          description: Unique identifier for the order\n        userId:\n          type: string\n          format: uuid\n          description: Unique identifier for the user placing the order\n        products:\n          type: array\n          description: List of products in the order with their quantities\n          items:\n            type: object\n            required:\n              - productId\n              - quantity\n            properties:\n              productId:\n                type: string\n                format: uuid\n                description: Unique identifier for the product\n              quantity:\n                type: integer\n                description: Quantity of the product ordered\n                minimum: 1\n        totalPrice:\n          type: number\n          format: float\n          description: Total price for the order\n          minimum: 0\n        accruedLoyaltyPoints:\n          type: integer\n          description: Loyalty points accrued from this order (calculated by loyalty-service)\n          minimum: 0\n        orderDate:\n          type: string\n          format: date-time\n          description: Timestamp when the order was placed\n        status:\n          type: string\n          description: Current status of the order\n          enum:\n            - PENDING\n            - PROCESSING\n            - SHIPPED\n            - DELIVERED\n            - CANCELED\n  \n    Error:\n      type: object\n      required:\n        - code\n        - message\n      properties:\n        code:\n          type: string\n          description: Error code\n          example: \"ORDER_NOT_FOUND\"\n        message:\n          type: string\n          description: Human-readable error message\n          example: \"The requested order could not be found\"\n        details:\n          type: string\n          description: Additional error details\n"
+        }
+      },
+      "derived": {
+        "repo_kind": "service",
+        "env_vars": [],
+        "auth_signals": [
+          {
+            "signal": "AuthMiddleware",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "nd return HTTP responses\n- Use standardized error responses\n\n### `/internal/middleware`\nHTTP middleware components:\n- **AuthMiddleware**: Validates Bearer tokens\n- **LoggingMiddleware**: Logs all requests and responses\n\n### `/internal/models`\nData struct"
+            }
+          }
+        ],
+        "endpoints": [
+          {
+            "method": "ANY",
+            "path": "/health",
+            "source": "openapi",
+            "confidence": "high",
+            "evidence": {
+              "path": "api/openapi.yaml",
+              "snippet": "tovi.com\n\nservers:\n  - url: http://localhost:8080\n    description: Local development server\n\nsecurity:\n  - {}\n\npaths:\n  /health:\n    get:\n      summary: Health check endpoint\n      operationId: healthCheck\n      responses:\n        '200':"
+            }
+          },
+          {
+            "method": "ANY",
+            "path": "/orders",
+            "source": "openapi",
+            "confidence": "high",
+            "evidence": {
+              "path": "api/openapi.yaml",
+              "snippet": "k endpoint\n      operationId: healthCheck\n      responses:\n        '200':\n          description: Server is healthy\n  \n  /orders:\n    get:\n      summary: Retrieve a list of orders\n      description: |\n        Retrieves a list of all orders in the s"
+            }
+          },
+          {
+            "method": "ANY",
+            "path": "/orders/{orderId}",
+            "source": "openapi",
+            "confidence": "high",
+            "evidence": {
+              "path": "api/openapi.yaml",
+              "snippet": "content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n  \n  /orders/{orderId}:\n    get:\n      summary: Get order by ID\n      description: |\n        Retrieves a single order by its unique identifier"
+            }
+          },
+          {
+            "method": "ANY",
+            "path": "/orders/{orderId}/submit",
+            "source": "openapi",
+            "confidence": "high",
+            "evidence": {
+              "path": "api/openapi.yaml",
+              "snippet": "content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Error'\n  \n  /orders/{orderId}/submit:\n    post:\n      summary: Cancel or submit an order\n      description: |\n        Cancels or submits an existing order."
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/health",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "`\n\n## API Documentation\n\nThe complete API specification is defined in `api/openapi.yaml`. Key endpoints:\n\n### Health\n- `GET /health` - Server health check (no auth required)\n\n### Users\n- User endpoints have been removed from order-service; use user-se"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/products",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "### Users\n- User endpoints have been removed from order-service; use user-service and loyalty-service.\n\n### Products\n- `GET /products` - List all products\n- `GET /products/{productId}` - Get product details\n\n### Orders\n- `GET /orders` - List all orders"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/products/{productId}",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "emoved from order-service; use user-service and loyalty-service.\n\n### Products\n- `GET /products` - List all products\n- `GET /products/{productId}` - Get product details\n\n### Orders\n- `GET /orders` - List all orders\n- `POST /orders` - Create a new order (requires us"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/orders",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "### Products\n- `GET /products` - List all products\n- `GET /products/{productId}` - Get product details\n\n### Orders\n- `GET /orders` - List all orders\n- `POST /orders` - Create a new order (requires userId)\n- `GET /orders/{orderId}` - Get order detail"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/orders",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "List all products\n- `GET /products/{productId}` - Get product details\n\n### Orders\n- `GET /orders` - List all orders\n- `POST /orders` - Create a new order (requires userId)\n- `GET /orders/{orderId}` - Get order details\n- `PATCH /orders/{orderId}` - Upd"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/orders/{orderId}",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "roduct details\n\n### Orders\n- `GET /orders` - List all orders\n- `POST /orders` - Create a new order (requires userId)\n- `GET /orders/{orderId}` - Get order details\n- `PATCH /orders/{orderId}` - Update order products (PENDING orders only)\n- `POST /orders/{orderId"
+            }
+          },
+          {
+            "method": "PATCH",
+            "path": "/orders/{orderId}",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "ist all orders\n- `POST /orders` - Create a new order (requires userId)\n- `GET /orders/{orderId}` - Get order details\n- `PATCH /orders/{orderId}` - Update order products (PENDING orders only)\n- `POST /orders/{orderId}/submit` - Submit or cancel an order\n\n### Authe"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/orders/{orderId}/submit",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "GET /orders/{orderId}` - Get order details\n- `PATCH /orders/{orderId}` - Update order products (PENDING orders only)\n- `POST /orders/{orderId}/submit` - Submit or cancel an order\n\n### Authentication\n\nAll endpoints (except `/health`) require a Bearer token in the Author"
+            }
+          }
+        ],
+        "depends_on": []
+      }
+    },
+    {
+      "full_name": "bitovi-training/product-service",
+      "html_url": "https://github.com/bitovi-training/product-service",
+      "description": "Product Service",
+      "homepage": null,
+      "topics": [],
+      "visibility": "public",
+      "private": false,
+      "archived": false,
+      "disabled": false,
+      "fork": false,
+      "default_branch": "main",
+      "created_at": "2026-01-12T22:29:59Z",
+      "updated_at": "2026-02-12T15:21:18Z",
+      "pushed_at": "2026-02-12T15:16:22Z",
+      "license": null,
+      "open_issues_count": 0,
+      "stargazers_count": 0,
+      "watchers_count": 0,
+      "forks_count": 0,
+      "language": "TypeScript",
+      "owner": {
+        "login": "bitovi-training",
+        "type": "Organization"
+      },
+      "languages_bytes": {
+        "TypeScript": 22457,
+        "JavaScript": 948,
+        "Dockerfile": 666
+      },
+      "files": {
+        "readme": {
+          "path": "README.md",
+          "text": "# Product Service\n\nNestJS service that exposes a minimal catalog API for products. This service is intentionally in-memory (no database) to keep integration demos lightweight.\n\n## Endpoints\n\n| Method | Path | Description | Auth |\n| --- | --- | --- | --- |\n| GET | `/products` | List products | None |\n| GET | `/products/:id` | Get a product by ID | `AuthGuard` |\n| POST | `/products` | Create a product | `AuthGuard` + `RequireRolesGuard` (`admin`) |\n\n## Auth\n\nAuthentication and role enforcement is handled via `@bitovi-corp/auth-middleware`.\n\n## Running locally\n\n```bash\nnpm install\nnpm run start:dev\n```\n\n## Tests\n\n```bash\nnpm run test\nnpm run test:e2e\n```"
+        },
+        "codeowners": null,
+        "catalog": null,
+        "openapi": null
+      },
+      "derived": {
+        "repo_kind": "service",
+        "env_vars": [],
+        "auth_signals": [
+          {
+            "signal": "AuthGuard",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "| --- | --- | --- | --- |\n| GET | `/products` | List products | None |\n| GET | `/products/:id` | Get a product by ID | `AuthGuard` |\n| POST | `/products` | Create a product | `AuthGuard` + `RequireRolesGuard` (`admin`) |\n\n## Auth\n\nAuthentication and"
+            }
+          },
+          {
+            "signal": "RequireRolesGuard",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "| GET | `/products/:id` | Get a product by ID | `AuthGuard` |\n| POST | `/products` | Create a product | `AuthGuard` + `RequireRolesGuard` (`admin`) |\n\n## Auth\n\nAuthentication and role enforcement is handled via `@bitovi-corp/auth-middleware`.\n\n## Running l"
+            }
+          }
+        ],
+        "endpoints": [],
+        "depends_on": []
+      }
+    },
+    {
+      "full_name": "bitovi-training/user-service",
+      "html_url": "https://github.com/bitovi-training/user-service",
+      "description": null,
+      "homepage": null,
+      "topics": [],
+      "visibility": "public",
+      "private": false,
+      "archived": false,
+      "disabled": false,
+      "fork": false,
+      "default_branch": "main",
+      "created_at": "2026-01-15T21:08:50Z",
+      "updated_at": "2026-02-12T15:26:46Z",
+      "pushed_at": "2026-02-12T15:16:28Z",
+      "license": null,
+      "open_issues_count": 0,
+      "stargazers_count": 0,
+      "watchers_count": 0,
+      "forks_count": 0,
+      "language": "TypeScript",
+      "owner": {
+        "login": "bitovi-training",
+        "type": "Organization"
+      },
+      "languages_bytes": {
+        "TypeScript": 50803,
+        "JavaScript": 883,
+        "Dockerfile": 567
+      },
+      "files": {
+        "readme": {
+          "path": "README.md",
+          "text": "# User Service\n\nA NestJS-based authentication service providing sign up, sign in, and logout functionality with JWT token generation. This service is designed to work with the auth-middleware for protecting other services in the microservices architecture.\n\n## Features\n\n- ✅ User registration (sign up) with email and password\n- ✅ User authentication (sign in) with credential verification\n- ✅ Secure logout with token invalidation\n- ✅ JWT token generation compatible with auth-middleware\n- ✅ Password hashing with bcrypt\n- ✅ Role-based access control (RBAC) support\n- ✅ In-memory user storage (easily replaceable with database)\n- ✅ Input validation with class-validator\n- ✅ Structured logging\n- ✅ Health check endpoint\n- ✅ Docker support\n\n## Architecture\n\nThe service follows a clean architecture pattern with:\n\n- **Controllers**: Handle HTTP requests and responses\n- **Services**: Business logic for authentication\n- **Repositories**: Data access layer (in-memory storage)\n- **DTOs**: Data transfer objects with validation\n- **Models**: Entity definitions\n\n### JWT Token Format\n\nThe service generates JWT tokens compatible with the auth-middleware:\n\n```json\n{\n  \"sub\": \"user-id\",\n  \"email\": \"user@example.com\",\n  \"roles\": [\"user\", \"admin\"],\n  \"iat\": 1737000000,\n  \"exp\": 1737086400\n}\n```\n\n⚠️ **Note**: This is a mock implementation that does NOT sign tokens cryptographically. For production use, implement proper JWT signing.\n\n## API Endpoints\n\n### Sign Up\n\nCreate a new user account.\n\n```\nPOST /auth/signup\nContent-Type: application/json\n\n{\n  \"email\": \"user@example.com\",\n  \"password\": \"securepassword123\",\n  \"roles\": [\"user\"]  // optional, defaults to [\"user\"]\n}\n```\n\n**Response** (201 Created):\n```json\n{\n  \"accessToken\": \"eyJhbGc...\",\n  \"user\": {\n    \"id\": \"uuid-v4\",\n    \"email\": \"user@example.com\",\n    \"roles\": [\"user\"]\n  }\n}\n```\n\n**Errors**:\n- 409 Conflict: Email already registered\n- 400 Bad Request: Invalid input data\n\n### Sign In\n\nAuthenticate with existing credentials.\n\n```\nPOST /auth/signin\nContent-Type: application/json\n\n{\n  \"email\": \"user@example.com\",\n  \"password\": \"securepassword123\"\n}\n```\n\n**Response** (200 OK):\n```json\n{\n  \"accessToken\": \"eyJhbGc...\",\n  \"user\": {\n    \"id\": \"uuid-v4\",\n    \"email\": \"user@example.com\",\n    \"roles\": [\"user\"]\n  }\n}\n```\n\n**Errors**:\n- 401 Unauthorized: Invalid credentials\n- 400 Bad Request: Invalid input data\n\n### Logout\n\nInvalidate the current user's token.\n\n```\nPOST /auth/logout\nAuthorization: Bearer <token>\n```\n\n**Response** (200 OK):\n```json\n{\n  \"message\": \"Logged out successfully\"\n}\n```\n\n**Errors**:\n- 401 Unauthorized: Missing or invalid token\n\n### Health Check\n\nCheck service status.\n\n```\nGET /health\n```\n\n**Response** (200 OK):\n```json\n{\n  \"status\": \"ok\",\n  \"timestamp\": \"2026-01-15T12:00:00.000Z\"\n}\n```\n\n## Installation\n\n```bash\nnpm install\n```\n\n## Running the Service\n\n### Development Mode\n\n```bash\nnpm run start:dev\n```\n\nThe service will start on `http://localhost:3002`.\n\n### Production Mode\n\n```bash\nnpm run build\nnpm run start:prod\n```\n\n### Docker\n\n```bash\ndocker build -t user-service .\ndocker run -p 3002:3002 user-service\n```\n\n### Docker Compose (with other services)\n\nFrom the `service-infra` directory:\n\n```bash\ndocker-compose up user-service\n```\n\n## Environment Variables\n\n- `PORT`: Server port (default: 3002)\n\n## Testing\n\n```bash\n# Unit tests\nnpm test\n\n# E2E tests\nnpm run test:e2e\n\n# Test coverage\nnpm run test:cov\n```\n\n## Usage Example\n\n### 1. Sign Up a New User\n\n```bash\ncurl -X POST http://localhost:3002/auth/signup \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"email\": \"alice@example.com\",\n    \"password\": \"strongpassword123\",\n    \"roles\": [\"user\", \"admin\"]\n  }'\n```\n\n### 2. Sign In\n\n```bash\ncurl -X POST http://localhost:3002/auth/signin \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"email\": \"alice@example.com\",\n    \"password\": \"strongpassword123\"\n  }'\n```\n\nSave the `accessToken` from the response.\n\n### 3. Use Token with Protected Services\n\nUse the token to access protected endpoints in other services (e.g., order-service, product-service):\n\n```bash\ncurl http://localhost:8100/api/orders \\\n  -H \"Authorization: Bearer <your-access-token>\"\n```\n\n### 4. Logout\n\n```bash\ncurl -X POST http://localhost:3002/auth/logout \\\n  -H \"Authorization: Bearer <your-access-token>\"\n```\n\n## Integration with Auth Middleware\n\nThis service generates JWT tokens that are compatible with the `@bitovi-corp/auth-middleware` middleware used in other services. The tokens include:\n\n- `sub`: User ID\n- `email`: User email\n- `roles`: Array of role strings\n- `iat`: Issued at timestamp\n- `exp`: Expiration timestamp (24 hours)\n\nOther services can validate these tokens using the AuthGuard:\n\n```typescript\nimport { AuthGuard, User, UserClaims } from '@bitovi-corp/auth-middleware';\n\n@Controller('api')\n@UseGuards(AuthGuard)\nexport class ProtectedController {\n  @Get('data')\n  getData(@User() user: UserClaims) {\n    // Access user info from token\n    return { userId: user.sub, email: user.email };\n  }\n}\n```\n\n## Security Considerations\n\n⚠️ **Important Security Notes**:\n\n1. **Mock Implementation**: This service does NOT use cryptographic signing for JWT tokens. In production:\n   - Use a proper JWT library (e.g., `@nestjs/jwt`, `jsonwebtoken`)\n   - Sign tokens with a secret key or RSA key pair\n   - Verify signatures on token validation\n\n2. **Password Storage**: Passwords are hashed with bcrypt (10 salt rounds). Consider:\n   - Increasing salt rounds for production\n   - Adding rate limiting to prevent brute force attacks\n\n3. **Token Storage**: Blacklisted tokens are stored in memory:\n   - In production, use Redis or a database\n   - Implement token refresh mechanism\n   - Consider shorter token expiration times\n\n4. **User Storage**: Users are stored in memory:\n   - In production, use a database (PostgreSQL, MongoDB, etc.)\n   - Implement proper database migrations\n\n5. **CORS**: Currently allows all origins:\n   - Configure specific allowed origins for production\n\n6. **Rate Limiting**: Not implemented:\n   - Add rate limiting to prevent abuse\n   - Implement account lockout after failed attempts\n\n## Project Structure\n\n```\nuser-service/\n├── src/\n│   ├── controllers/        # HTTP controllers\n│   │   ├── auth.controller.ts\n│   │   └── health.controller.ts\n│   ├── dto/               # Data transfer objects\n│   │   ├── sign-up.dto.ts\n│   │   ├── sign-in.dto.ts\n│   │   └── auth-response.dto.ts\n│   ├── models/            # Entity models\n│   │   └── user.entity.ts\n│   ├── modules/           # NestJS modules\n│   │   └── auth.module.ts\n│   ├── repositories/      # Data access layer\n│   │   └── user.repository.ts\n│   ├── services/          # Business logic\n│   │   ├── auth.service.ts\n│   │   ├── jwt.service.ts\n│   │   └── password.service.ts\n│   ├── app.module.ts\n│   └── main.ts\n├── test/\n├── Dockerfile\n├── package.json\n└── README.md\n```\n\n## Development\n\n### Code Formatting\n\n```bash\nnpm run format\n```\n\n### Linting\n\n```bash\nnpm run lint\n```\n\n## License\n\nUNLICENSED\n"
+        },
+        "codeowners": null,
+        "catalog": null,
+        "openapi": null
+      },
+      "derived": {
+        "repo_kind": "service",
+        "env_vars": [
+          {
+            "name": "PORT",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "ken generation compatible with auth-middleware\n- ✅ Password hashing with bcrypt\n- ✅ Role-based access control (RBAC) support\n- ✅ In-memory user storage (easily replaceable with database)\n- ✅ Input validation with class-validator\n- ✅ Structured"
+            }
+          }
+        ],
+        "auth_signals": [
+          {
+            "signal": "AuthGuard",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "`iat`: Issued at timestamp\n- `exp`: Expiration timestamp (24 hours)\n\nOther services can validate these tokens using the AuthGuard:\n\n```typescript\nimport { AuthGuard, User, UserClaims } from '@bitovi-corp/auth-middleware';\n\n@Controller('api')\n@UseGua"
+            }
+          }
+        ],
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/auth/signup",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "ally. For production use, implement proper JWT signing.\n\n## API Endpoints\n\n### Sign Up\n\nCreate a new user account.\n\n```\nPOST /auth/signup\nContent-Type: application/json\n\n{\n  \"email\": \"user@example.com\",\n  \"password\": \"securepassword123\",\n  \"roles\": [\"user\"]"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/auth/signin",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "ail already registered\n- 400 Bad Request: Invalid input data\n\n### Sign In\n\nAuthenticate with existing credentials.\n\n```\nPOST /auth/signin\nContent-Type: application/json\n\n{\n  \"email\": \"user@example.com\",\n  \"password\": \"securepassword123\"\n}\n```\n\n**Response**"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/auth/logout",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "rized: Invalid credentials\n- 400 Bad Request: Invalid input data\n\n### Logout\n\nInvalidate the current user's token.\n\n```\nPOST /auth/logout\nAuthorization: Bearer <token>\n```\n\n**Response** (200 OK):\n```json\n{\n  \"message\": \"Logged out successfully\"\n}\n```\n\n**Err"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/health",
+            "source": "readme",
+            "confidence": "medium",
+            "evidence": {
+              "path": "README.md",
+              "snippet": "essfully\"\n}\n```\n\n**Errors**:\n- 401 Unauthorized: Missing or invalid token\n\n### Health Check\n\nCheck service status.\n\n```\nGET /health\n```\n\n**Response** (200 OK):\n```json\n{\n  \"status\": \"ok\",\n  \"timestamp\": \"2026-01-15T12:00:00.000Z\"\n}\n```\n\n## Installatio"
+            }
+          }
+        ],
+        "depends_on": []
+      }
+    }
+  ],
+  "dependency_edges": [
+    {
+      "from": "api-tests",
+      "to": "loyalty-service",
+      "type": "http",
+      "confidence": "medium",
+      "evidence": {
+        "path": "README.md",
+        "snippet": "SER_SERVICE_URL=http://localhost:8400\nORDER_SERVICE_URL=http://localhost:8100\nPRODUCT_SERVICE_URL=http://localhost:8200\nLOYALTY_SERVICE_URL=http://localhost:8300\n\n# Optional: tests will generate mock JWTs automatically if unset\nUSER_ROLE_TOKEN=\nMISSING_ROLES_"
+      }
+    },
+    {
+      "from": "api-tests",
+      "to": "order-service",
+      "type": "http",
+      "confidence": "medium",
+      "evidence": {
+        "path": "README.md",
+        "snippet": "es not exist, the global Jest setup will create one from `.env.example`.\n\n```env\nUSER_SERVICE_URL=http://localhost:8400\nORDER_SERVICE_URL=http://localhost:8100\nPRODUCT_SERVICE_URL=http://localhost:8200\nLOYALTY_SERVICE_URL=http://localhost:8300\n\n# Optional:"
+      }
+    },
+    {
+      "from": "api-tests",
+      "to": "product-service",
+      "type": "http",
+      "confidence": "medium",
+      "evidence": {
+        "path": "README.md",
+        "snippet": "create one from `.env.example`.\n\n```env\nUSER_SERVICE_URL=http://localhost:8400\nORDER_SERVICE_URL=http://localhost:8100\nPRODUCT_SERVICE_URL=http://localhost:8200\nLOYALTY_SERVICE_URL=http://localhost:8300\n\n# Optional: tests will generate mock JWTs automaticall"
+      }
+    },
+    {
+      "from": "api-tests",
+      "to": "user-service",
+      "type": "http",
+      "confidence": "medium",
+      "evidence": {
+        "path": "README.md",
+        "snippet": "n from `api-tests/.env`. If the file does not exist, the global Jest setup will create one from `.env.example`.\n\n```env\nUSER_SERVICE_URL=http://localhost:8400\nORDER_SERVICE_URL=http://localhost:8100\nPRODUCT_SERVICE_URL=http://localhost:8200\nLOYALTY_SERVICE"
+      }
+    },
+    {
+      "from": "loyalty-service",
+      "to": "order-service",
+      "type": "http",
+      "confidence": "medium",
+      "evidence": {
+        "path": "README.md",
+        "snippet": ".md](./ORDER_CLIENT.md) for usage documentation.**\n\n## Environment Variables\n\n- `PORT` - Server port (default: 3000)\n- `ORDER_SERVICE_URL` - Order service URL (default: http://localhost:8100)\n- `USER_SERVICE_URL` - User service URL (default: http://localhos"
+      }
+    },
+    {
+      "from": "loyalty-service",
+      "to": "user-service",
+      "type": "http",
+      "confidence": "medium",
+      "evidence": {
+        "path": "README.md",
+        "snippet": "s\n\n- `PORT` - Server port (default: 3000)\n- `ORDER_SERVICE_URL` - Order service URL (default: http://localhost:8100)\n- `USER_SERVICE_URL` - User service URL (default: http://localhost:8400)\n\n## API Endpoints\n\n- `GET /loyalty/:userId/balance` - Get loyalty"
+      }
+    }
+  ]
+}

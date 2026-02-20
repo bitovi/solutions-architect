@@ -1,0 +1,7 @@
+bitovi-training/api-tests
+bitovi-training/loyalty-service
+bitovi-training/auth-middleware
+bitovi-training/auth-middleware-go
+bitovi-training/order-service
+bitovi-training/product-service
+bitovi-training/user-service
