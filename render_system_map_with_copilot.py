@@ -57,20 +57,9 @@ def load_dotenv(path: Path) -> None:
         os.environ[key] = value
 
 
-def prepare_copilot_env_for_subprocess(use_env_tokens: bool) -> dict[str, str]:
-    """
-    Build environment for Copilot subprocess.
-
-    Default behavior avoids forcing GH_TOKEN/GITHUB_TOKEN/COPILOT_GITHUB_TOKEN,
-    because token vars may override a valid Copilot OAuth session with a token
-    lacking Copilot-compatible scopes/entitlements.
-    """
-    env = os.environ.copy()
-    if not use_env_tokens:
-        env.pop("GH_TOKEN", None)
-        env.pop("GITHUB_TOKEN", None)
-        env.pop("COPILOT_GITHUB_TOKEN", None)
-    return env
+def prepare_copilot_env_for_subprocess() -> dict[str, str]:
+    """Build environment for Copilot subprocess (assumes user is already authenticated)."""
+    return os.environ.copy()
 
 
 def build_prompt(
@@ -203,9 +192,8 @@ def print_copilot_failure_diagnostics(result: subprocess.CompletedProcess[str]) 
     if result.stderr:
         print(result.stderr, file=sys.stderr)
     print(
-        "Hint: If this is your first run, start `copilot` interactively and run `/login`.\n"
-        "Hint: Copilot CLI trust/permission prompts can block unattended runs unless explicit\n"
-        "      flags are provided (for example --allow-tool / --allow-all-paths / --allow-all-urls).",
+        "Hint: Ensure you're authenticated via `gh auth login` or `copilot` + `/login`.\n"
+        "Hint: You may also set COPILOT_GITHUB_TOKEN / GH_TOKEN / GITHUB_TOKEN if desired.",
         file=sys.stderr,
     )
 
@@ -291,20 +279,12 @@ def main() -> None:
         help="Optional Copilot model override (passed as --model).",
     )
     parser.add_argument(
-        "--use-env-tokens",
-        action="store_true",
-        help=(
-            "Pass GH_TOKEN/GITHUB_TOKEN/COPILOT_GITHUB_TOKEN to Copilot process. "
-            "Default is off to avoid overriding a working Copilot OAuth session."
-        ),
-    )
-    parser.add_argument(
         "--debug",
         action="store_true",
         help="Enable debug logs for generator/copilot command execution.",
     )
     args = parser.parse_args()
-    copilot_env = prepare_copilot_env_for_subprocess(args.use_env_tokens)
+    copilot_env = prepare_copilot_env_for_subprocess()
 
     debug_log(args.debug, f"workspace={here}")
     json_path = run_generate_system_map(here, debug=args.debug).resolve()
@@ -370,7 +350,7 @@ def main() -> None:
             output_file=shlex.quote(str(output_path)),
         )
         debug_log(args.debug, f"template command: {command}")
-        print(f"Running Copilot command template: {command}")
+        print(f"Running Copilot command (this could take a while): {command}")
         result = run_command(command)
         debug_log_subprocess_result(args.debug, "copilot-template", result)
         append_chat_log(chat_log, "copilot-template", result)
@@ -380,7 +360,10 @@ def main() -> None:
     else:
         base = require_copilot_cmd()
         cmd = build_auto_copilot_command(base=base, prompt=prompt, model=args.model, add_dir=here)
-        print(f"Running Copilot command: {format_auto_command_preview(base, args.model, here)}")
+        print(
+            "Running Copilot command (this could take a while): "
+            f"{format_auto_command_preview(base, args.model, here)}"
+        )
         result = subprocess.run(
             cmd,
             text=True,

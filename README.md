@@ -20,7 +20,7 @@ Workflow:
 3. Fill MCP settings in `.vscode/mcp.json`
 4. Generate/update system map via `python3 generate_system_map.py`
 5. Render `SYSTEMS_MAP.md` from the generated JSON
-6. Ask AI architect for a plan
+6. Generate `SOLUTION_PLAN.md` from your request
 
 ## Two-step architecture workflow
 
@@ -64,6 +64,26 @@ You must replace:
 
 You should also verify:
 - `enterpriseCode` path (`../enterprise-ai-mcp/src/index.ts`) is correct in your local workspace
+
+### 4) Authenticate Copilot CLI (required)
+
+Both automation scripts (`render_system_map_with_copilot.py` and `generate_solution_plan_with_copilot.py`) assume you are already authenticated with Copilot/GitHub.
+
+Authenticate with either:
+
+```bash
+gh auth login
+```
+
+or:
+
+```bash
+copilot
+```
+
+Then run `/login` in the Copilot session.
+
+Optional: you may also set `COPILOT_GITHUB_TOKEN`, `GH_TOKEN`, or `GITHUB_TOKEN` in your shell/.env.
 
 ## Generate or refresh the systems map
 
@@ -116,17 +136,53 @@ Important behavior:
 - Copilot is expected to update `SYSTEMS_MAP.md` via its own tool-based file edits.
 - Script stdout/stderr from Copilot is appended to the chat log for debugging/auditing.
 
-If Copilot returns auth errors, open an interactive session and run `/login`:
+If Copilot returns auth errors, re-run `gh auth login` or `copilot` + `/login`.
+
+## Generate `SOLUTION_PLAN.md` (step 2)
+
+Use the minimal planner script with one required argument (your planning request):
 
 ```bash
-copilot
+python3 generate_solution_plan_with_copilot.py "Add loyalty points expiration with customer notifications"
 ```
+
+This script:
+
+1. reads `SYSTEMS_MAP.md`
+2. reads `SOLUTION_PLANNING_INSTRUCTIONS.md`
+3. runs `copilot` with a generated planning prompt
+4. writes `SOLUTION_PLAN.md`
+
+It also writes:
+
+- `.copilot_solution_plan_prompt.md` (generated prompt)
+- `.copilot_solution_plan_chat.log.md` (Copilot stdout/stderr transcript)
+
+## Run the full user-facing workflow (step 1 + step 2)
+
+Use this to run both steps in sequence with brief status updates:
+
+```bash
+python3 run_solutions_architect_workflow.py "Add loyalty points expiration with customer notifications"
+```
+
+It will:
+
+1. run system-map generation/render
+2. report step completion
+3. run solution-plan generation
+4. report step completion
+
+When entering Copilot-heavy steps, it prints `(this could take a while)`.
 
 ## Files
 
 - `SOLUTION_PLANNING_INSTRUCTIONS.md` - AI solutions architect planning guide (step 2)
+- `generate_solution_plan_with_copilot.py` - step-2 script to generate `SOLUTION_PLAN.md` from a request
+- `run_solutions_architect_workflow.py` - user-facing script to run step 1 then step 2 with status output
 - `SYSTEM_MAP_INSTRUCTIONS.md` - step-1 instructions for rendering SYSTEMS_MAP.md
 - `SYSTEMS_MAP.md` - AI-generated system map in context
+- `SOLUTION_PLAN.md` - AI-generated implementation plan for a specific request
 - `systems_map.json` - generated machine-readable system map
 - `generate_system_map.py` - map generator script
 - `repos.txt` - repositories to analyze
