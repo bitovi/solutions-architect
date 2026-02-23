@@ -3,8 +3,8 @@
 User-facing workflow runner for solutions-architect.
 
 Runs both steps in order:
-1) Render SYSTEMS_MAP.md
-2) Generate SOLUTION_PLAN.md
+1) Render output/SYSTEMS_MAP.md
+2) Generate output/SOLUTION_PLAN.md
 """
 
 from __future__ import annotations
@@ -58,14 +58,14 @@ def main() -> None:
         "- running Copilot command (this could take a while): system-map render",
         [sys.executable, str(step1_script), "--run"],
     )
-    print("✓ Step 1 complete: SYSTEMS_MAP.md updated")
+    print("✓ Step 1 complete: output/SYSTEMS_MAP.md updated")
 
     print("\nStep 2/2: Generate architected solution plan")
     run_step(
         "- running Copilot command (this could take a while): solution-plan generation",
         [sys.executable, str(step2_script), request],
     )
-    print("✓ Step 2 complete: SOLUTION_PLAN.md updated")
+    print("✓ Step 2 complete: output/SOLUTION_PLAN.md updated")
 
     print("\nDone.")
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate a systems_map.json describing GitHub repositories listed in repos.txt.
+Generate an output/systems_map.json describing GitHub repositories listed in repos.txt.
 
 Inputs:
   - repos.txt (sibling to this script): one "owner/repo" per line
@@ -563,6 +563,7 @@ def get_repo_bundle_graphql(s: Dict[str, str], specs: List[RepoSpec]) -> Dict[st
 
 def main() -> None:
     here = Path(__file__).resolve().parent
+    output_dir = here / "output"
     load_dotenv(here / ".env")
     repo_list_path = here / "repos.txt"
     specs = load_repo_list(repo_list_path)
@@ -612,7 +613,8 @@ def main() -> None:
                     }
                 )
 
-    out_path = here / "systems_map.json"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    out_path = output_dir / "systems_map.json"
     out_path.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"Wrote {out_path}", file=sys.stderr)
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Render SYSTEMS_MAP.md from systems_map.json using Copilot CLI.
+Render output/SYSTEMS_MAP.md from output/systems_map.json using Copilot CLI.
 
 This script is designed for "vacuum mode" where only the solutions-architect
 folder is available locally. It provides Copilot with:
-  1) the generated systems_map.json
+  1) the generated output/systems_map.json
   2) operating instructions/guardrails from SYSTEM_MAP_INSTRUCTIONS.md
 
 The prompt enforces MCP tool usage policy:
@@ -124,14 +124,14 @@ def run_command(command: str) -> subprocess.CompletedProcess[str]:
 
 
 def run_generate_system_map(here: Path, debug: bool = False) -> Path:
-    """Regenerate systems_map.json from repos.txt before rendering markdown."""
+    """Regenerate output/systems_map.json from repos.txt before rendering markdown."""
     generator = here / "generate_system_map.py"
     if not generator.exists():
         die(f"Missing generator script: {generator}")
 
     cmd = [sys.executable, str(generator)]
     debug_log(debug, f"generator command: {' '.join(shlex.quote(c) for c in cmd)}")
-    print("Generating systems_map.json from repos.txt...")
+    print("Generating output/systems_map.json from repos.txt...")
     result = subprocess.run(
         cmd,
         text=True,
@@ -144,17 +144,17 @@ def run_generate_system_map(here: Path, debug: bool = False) -> Path:
             print(result.stdout, file=sys.stderr)
         if result.stderr:
             print(result.stderr, file=sys.stderr)
-        die("Failed to generate systems_map.json from repos.txt.")
+        die("Failed to generate output/systems_map.json from repos.txt.")
 
     if result.stdout:
         debug_log(debug, "generator stdout:\n" + result.stdout.strip())
     if result.stderr:
         print(result.stderr, file=sys.stderr)
 
-    json_path = here / "systems_map.json"
+    json_path = here / "output" / "systems_map.json"
     if not json_path.exists() or json_path.stat().st_size == 0:
-        die(f"Generator completed but systems_map.json is missing/empty: {json_path}")
-    debug_log(debug, f"systems_map.json size={json_path.stat().st_size} bytes")
+        die(f"Generator completed but output/systems_map.json is missing/empty: {json_path}")
+    debug_log(debug, f"output/systems_map.json size={json_path.stat().st_size} bytes")
     return json_path
 
 
@@ -232,13 +232,13 @@ def main() -> None:
     load_dotenv(here / ".env")
 
     parser = argparse.ArgumentParser(
-        description="Generate systems_map.json from repos.txt and render SYSTEMS_MAP.md with Copilot CLI"
+        description="Generate output/systems_map.json from repos.txt and render output/SYSTEMS_MAP.md with Copilot CLI"
     )
     parser.add_argument(
         "--output",
         dest="output_path",
-        default=str(here / "SYSTEMS_MAP.md"),
-        help="Path for generated SYSTEMS_MAP.md",
+        default=str(here / "output" / "SYSTEMS_MAP.md"),
+        help="Path for generated output/SYSTEMS_MAP.md",
     )
     parser.add_argument(
         "--instructions",
@@ -249,13 +249,13 @@ def main() -> None:
     parser.add_argument(
         "--prompt-out",
         dest="prompt_out",
-        default=str(here / ".copilot_system_map_prompt.md"),
+        default=str(here / "output" / ".copilot_system_map_prompt.md"),
         help="Path to write generated prompt",
     )
     parser.add_argument(
         "--chat-log",
         dest="chat_log",
-        default=str(here / ".copilot_system_map_chat.log.md"),
+        default=str(here / "output" / ".copilot_system_map_chat.log.md"),
         help="Path to append Copilot stdout/stderr logs.",
     )
     parser.add_argument(

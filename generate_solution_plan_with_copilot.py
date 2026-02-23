@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Generate SOLUTION_PLAN.md from a user request using Copilot CLI.
+Generate output/SOLUTION_PLAN.md from a user request using Copilot CLI.
 
 This is step 2 of the solutions-architect workflow:
-1) SYSTEMS_MAP.md already exists (step 1)
+1) output/SYSTEMS_MAP.md already exists (step 1)
 2) This script produces an architected implementation plan using:
-   - SYSTEMS_MAP.md
+   - output/SYSTEMS_MAP.md
    - SOLUTION_PLANNING_INSTRUCTIONS.md
 
 The script is intentionally minimal:
@@ -68,6 +68,7 @@ def require_copilot_cmd() -> list[str]:
 def build_prompt(
     request: str,
     systems_map_path: Path,
+    instructions_path: Path,
     output_path: Path,
     instructions_text: str,
 ) -> str:
@@ -80,7 +81,7 @@ def build_prompt(
 
         ## Primary Inputs (must be used)
         - Systems map: {systems_map_path}
-        - Planning instructions: {systems_map_path.parent / 'SOLUTION_PLANNING_INSTRUCTIONS.md'}
+        - Planning instructions: {instructions_path}
 
         ## Planning Instructions (verbatim)
         ```markdown
@@ -133,7 +134,7 @@ def main() -> None:
     copilot_env = prepare_copilot_env_for_subprocess()
 
     parser = argparse.ArgumentParser(
-        description="Generate SOLUTION_PLAN.md from a planning request using Copilot CLI"
+        description="Generate output/SOLUTION_PLAN.md from a planning request using Copilot CLI"
     )
     parser.add_argument(
         "request",
@@ -145,16 +146,19 @@ def main() -> None:
     if not request:
         die("Planning request is required.")
 
-    systems_map_path = (here / "SYSTEMS_MAP.md").resolve()
+    output_dir = (here / "output").resolve()
+    systems_map_path = (output_dir / "SYSTEMS_MAP.md").resolve()
     instructions_path = (here / "SOLUTION_PLANNING_INSTRUCTIONS.md").resolve()
-    output_path = (here / "SOLUTION_PLAN.md").resolve()
-    prompt_path = (here / ".copilot_solution_plan_prompt.md").resolve()
-    chat_log = (here / ".copilot_solution_plan_chat.log.md").resolve()
+    output_path = (output_dir / "SOLUTION_PLAN.md").resolve()
+    prompt_path = (output_dir / ".copilot_solution_plan_prompt.md").resolve()
+    chat_log = (output_dir / ".copilot_solution_plan_chat.log.md").resolve()
+
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     if not systems_map_path.exists() or systems_map_path.stat().st_size == 0:
         die(
             f"Missing or empty systems map: {systems_map_path}. "
-            "Run step 1 first to generate SYSTEMS_MAP.md."
+            "Run step 1 first to generate output/SYSTEMS_MAP.md."
         )
     if not instructions_path.exists() or instructions_path.stat().st_size == 0:
         die(f"Missing or empty planning instructions: {instructions_path}")
@@ -163,6 +167,7 @@ def main() -> None:
     prompt = build_prompt(
         request=request,
         systems_map_path=systems_map_path,
+        instructions_path=instructions_path,
         output_path=output_path,
         instructions_text=instructions_text,
     )
