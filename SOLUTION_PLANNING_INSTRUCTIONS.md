@@ -1,4 +1,4 @@
-# AGENTS.md — AI Solutions Architect Operating Guide
+# SOLUTION_PLANNING_INSTRUCTIONS.md — AI Solutions Architect Operating Guide
 
 This document defines your standard operating procedure as an AI Solutions Architect in enterprise software environments.
 

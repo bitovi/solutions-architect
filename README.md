@@ -19,7 +19,15 @@ Workflow:
 2. Fill secrets and config in `.env`
 3. Fill MCP settings in `.vscode/mcp.json`
 4. Generate/update system map via `python3 generate_system_map.py`
-5. Ask AI architect for a plan
+5. Render `SYSTEMS_MAP.md` from the generated JSON
+6. Ask AI architect for a plan
+
+## Two-step architecture workflow
+
+- **Step 1 (system mapping):** `SYSTEM_MAP_INSTRUCTIONS.md`
+  - Used only to render `SYSTEMS_MAP.md` from `systems_map.json`.
+- **Step 2 (solution planning):** `SOLUTION_PLANNING_INSTRUCTIONS.md`
+  - Used for architected implementation plans from user queries.
 
 ## Required setup
 
@@ -67,9 +75,57 @@ python3 generate_system_map.py
 
 This reads `repos.txt` and writes `systems_map.json` with repo metadata and inferred architecture signals.
 
+## Generate and render `SYSTEMS_MAP.md` in one flow
+
+`render_system_map_with_copilot.py` now does the full pipeline:
+
+1. reads `repos.txt`
+2. regenerates `systems_map.json`
+3. renders `SYSTEMS_MAP.md` with the **new** Copilot CLI (`copilot`)
+4. uses `SYSTEM_MAP_INSTRUCTIONS.md` by default for this step
+
+It does **not** fall back to `gh copilot`.
+
+### Dry run (regenerate JSON + build prompt)
+
+```bash
+python3 render_system_map_with_copilot.py
+```
+
+This regenerates `systems_map.json`, writes `.copilot_system_map_prompt.md`, and prints the command preview.
+
+### Generate final markdown
+
+```bash
+python3 render_system_map_with_copilot.py --run
+```
+
+This runs `copilot -p "<generated-prompt>" -s --allow-all-tools --add-dir <solutions-architect-dir>` and writes `SYSTEMS_MAP.md`.
+
+Optional:
+
+- `--model <MODEL>` to pin a specific Copilot model
+- `--copilot-cmd-template '...'` for custom execution behavior
+- `--debug` to print extra execution details (command info, file sizes, subprocess snippets)
+- `--instructions <PATH>` to provide a different system-map instruction file
+- `--chat-log <PATH>` to append Copilot chat/output transcript (default: `.copilot_system_map_chat.log.md`)
+
+Important behavior:
+
+- The script **does not write markdown content from Copilot stdout** into `SYSTEMS_MAP.md`.
+- Copilot is expected to update `SYSTEMS_MAP.md` via its own tool-based file edits.
+- Script stdout/stderr from Copilot is appended to the chat log for debugging/auditing.
+
+If Copilot returns auth errors, open an interactive session and run `/login`:
+
+```bash
+copilot
+```
+
 ## Files
 
-- `AGENTS.md` - AI solutions architect operating guide
+- `SOLUTION_PLANNING_INSTRUCTIONS.md` - AI solutions architect planning guide (step 2)
+- `SYSTEM_MAP_INSTRUCTIONS.md` - step-1 instructions for rendering SYSTEMS_MAP.md
 - `SYSTEMS_MAP.md` - AI-generated system map in context
 - `systems_map.json` - generated machine-readable system map
 - `generate_system_map.py` - map generator script
