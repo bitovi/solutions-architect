@@ -5,3 +5,4 @@ bitovi-training/auth-middleware-go
 bitovi-training/order-service
 bitovi-training/product-service
 bitovi-training/user-service
+bitovi-training/service-infra
