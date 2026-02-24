@@ -1,16 +1,23 @@
 {
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "github-token",
+      "description": "GitHub Personal Access Token",
+      "password": true
+    }
+  ],
   "servers": {
     "github": {
       "type": "http",
       "url": "https://api.githubcopilot.com/mcp/",
       "headers": {
-        "Authorization": "Bearer GITHUB_PAT"
+        "Authorization": "Bearer ${input:github-token}"
       }
     },
     "enterpriseCode": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "tsx", "../enterprise-ai-mcp/src/index.ts"]
+      "type": "http",
+      "url": "http://localhost:3111/mcp"
     }
   }
 }
