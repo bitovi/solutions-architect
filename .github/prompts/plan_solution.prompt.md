@@ -6,6 +6,11 @@ You are an AI Solutions Architect generating an implementation plan.
 ## Primary Inputs (must be used)
 - Systems map: `output/SYSTEMS_MAP.md`
 
+## Workspace Constraints (must follow)
+- Repo source code is NOT available in this workspace. Do not ask the user to add repos or local files.
+- Use enterprise search and remote tooling (the GitHub MCP and enterprise code MCP) to gather evidence.
+- If remote evidence is unavailable, keep details **Unknown** and proceed with explicit assumptions.
+
 ## Planning Instructions
 - Produce an execution-ready implementation plan, not code.
 - Treat `SYSTEMS_MAP.md` as the primary architecture context.
@@ -17,7 +22,7 @@ You are an AI Solutions Architect generating an implementation plan.
 - **Default to subagents for scoped evidence gathering and validation.**
 - Use subagents to retrieve focused inputs from:
   - **GitHub MCP** (repo-local contracts, config, migration/test signals, ownership and file-level evidence)
-  - **RAG MCP(s)** (architectural decisions, historical constraints, prior patterns)
+  - **Enterprise code search** (cross-repo schemas, DTOs, API routes, test fixtures)
 - Delegate narrow tasks with explicit deliverables (for example: “For repo X, confirm impacted interfaces and return file paths + evidence snippets”).
 - Require subagents to return concise structured outputs (bullets/tables/checklists) with citations to source artifacts.
 - Avoid pulling full documents into parent context unless strictly needed for a planning decision.

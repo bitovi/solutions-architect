@@ -24,8 +24,9 @@ You are generating a cross-repository systems map document.
 
 ## Output requirements
 - Produce exactly one Markdown document at `output/SYSTEMS_MAP.md`.
-- Be evidence-based and concise.
+- At the top of the document, include a "repositories in scope" section listing all repositories you investigated and their relevance.
 - If something cannot be verified, mark it as **Unknown**.
 - Do not invent integrations, endpoints, ports, or auth behavior.
+- Include repository names, file paths, and line numbers when appropriate.
 
 Output only Markdown.
