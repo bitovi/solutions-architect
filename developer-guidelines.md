@@ -28,7 +28,7 @@ TODO: STEPS TO RUN THE TESTS
 
 ### Phase 1 — Update Integration Tests
 
-Before touching any service code, update the `api-tests` repository to describe the **new expected behavior**.
+Before updating any service code, update the `api-tests` repository to describe the **new expected behavior**.
 
 1. Read the relevant operation plan in `operations/` to understand the contract changes (new fields, updated request/response shapes, changed calculations).
 2. Add or modify integration test cases in `api-tests` that assert the new behavior end-to-end.
