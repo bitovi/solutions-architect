@@ -1,6 +1,6 @@
-# Systems Map: Bitovi Training Microservices Architecture
+# Systems Map: Bitovi Training Microservices
 
-**Generated:** 2026-02-27  
+**Generated:** 2026-02-28  
 **Source:** Compose-first discovery from `bitovi-training/service-infra/docker-compose.yml`  
 **Repositories Analyzed:** 8 (4 services + 2 auth middleware + 1 infra + 1 tests)
 
@@ -8,14 +8,37 @@
 
 ## Executive Summary
 
-This is a microservices-based e-commerce platform consisting of four core services (order, product, user, loyalty) orchestrated via Docker Compose. All services except user-service require JWT Bearer authentication. Services communicate via HTTP REST APIs with environment-variable-based service discovery.
+This is a microservices-based e-commerce platform with four core services (order, product, user, loyalty) orchestrated via Docker Compose. Services communicate via HTTP REST APIs using environment-variable-based service discovery. Authentication follows a distributed validation pattern with centralized JWT generation.
 
-**Key Architectural Characteristics:**
-- **Authentication Model:** Centralized JWT generation (user-service), distributed validation (auth middleware in each service)
+**Key Characteristics:**
+- **Authentication:** Centralized token generation (user-service), distributed validation (auth middleware per service)
 - **Service Discovery:** Environment variables (`*_SERVICE_URL`)
-- **Authorization:** Role-Based Access Control (RBAC) with "admin" and "user" roles
+- **Authorization:** Role-Based Access Control (admin/user roles)
 - **Storage:** In-memory (development/demo only)
-- **Tech Stack:** Mixed (Go for order-service, NestJS/Node.js for others)
+- **Tech Stack:** Mixed (Go for order-service, NestJS for others)
+
+---
+
+## Repositories in Scope
+
+All repositories cloned locally to `/Users/nikita/solutions-architect/workdir/repos/`
+
+| Repository | Owner | Purpose | Status |
+|------------|-------|---------|--------|
+| service-infra | bitovi-training | Docker Compose orchestration | ✅ Analyzed |
+| order-service | bitovi-training | Order management (Go) | ✅ Analyzed |
+| product-service | bitovi-training | Product catalog (NestJS) | ✅ Analyzed |
+| user-service | bitovi-training | Authentication provider (NestJS) | ✅ Analyzed |
+| loyalty-service | bitovi-training | Loyalty points management (NestJS) | ✅ Analyzed |
+| auth-middleware | bitovi-corp | Node.js auth library | ✅ Analyzed |
+| auth-middleware-go | bitovi-corp | Go auth library | ✅ Analyzed |
+| api-tests | bitovi-training | Integration test suite | ✅ Analyzed |
+
+**Discovery Method:**
+1. Started with docker-compose.yml from service-infra
+2. Extracted build contexts to identify service repos
+3. Searched package.json and go.mod for auth middleware dependencies
+4. Located api-tests via repository pattern matching
 
 ---
 
@@ -24,40 +47,46 @@ This is a microservices-based e-commerce platform consisting of four core servic
 ### 1. order-service
 
 **Repository:** `bitovi-training/order-service`  
-**Purpose:** E-commerce order management API providing order CRUD operations with product validation and loyalty point integration  
+**Purpose:** E-commerce order management with product validation and loyalty point integration  
 **Tech Stack:** Go 1.25.5  
-**Runtime Port:** `8100` (from docker-compose.yml)  
-**Dockerfile:**
-- Line 2: `FROM golang:1.25.5-alpine AS builder` ([workdir/repos/order-service/Dockerfile:2](workdir/repos/order-service/Dockerfile#L2))
-- Line 18: `FROM alpine:latest` ([workdir/repos/order-service/Dockerfile:18](workdir/repos/order-service/Dockerfile#L18))
+**Runtime Port:** `8100` (docker-compose), `8080` (code default)  
 
-**Environment Variables:**
-- `PORT=8100` (docker-compose.yml)
-- `PRODUCT_SERVICE_URL=http://product-service:8200` (docker-compose.yml)
-- `LOYALTY_SERVICE_URL=http://loyalty-service:8300` (docker-compose.yml)
+**Docker Images:**
+- Build: `FROM golang:1.25.5-alpine AS builder` ([Dockerfile:2](workdir/repos/order-service/Dockerfile#L2))
+- Runtime: `FROM alpine:latest` ([Dockerfile:19](workdir/repos/order-service/Dockerfile#L19))
+
+**Environment Variables (docker-compose.yml):**
+```yaml
+PORT: 8100
+PRODUCT_SERVICE_URL: http://product-service:8200
+LOYALTY_SERVICE_URL: http://loyalty-service:8300
+```
 
 **Dependencies:**
-- product-service (outbound: product validation)
-- loyalty-service (outbound: point accrual)
-- auth-middleware-go v0.2.0 ([workdir/repos/order-service/go.mod:6](workdir/repos/order-service/go.mod#L6))
+- product-service (outbound: validate products, get pricing)
+- loyalty-service (outbound: accrue loyalty points)
+- auth-middleware-go v0.2.0 ([go.mod:6](workdir/repos/order-service/go.mod#L6))
 
 ---
 
 ### 2. product-service
 
 **Repository:** `bitovi-training/product-service`  
-**Purpose:** NestJS service that exposes a minimal catalog API for products with in-memory storage  
+**Purpose:** Product catalog API with in-memory storage  
 **Tech Stack:** NestJS 11.0.1, Node.js 20-alpine, TypeScript 5.7.3  
-**Runtime Port:** `8200` (from docker-compose.yml)  
-**Dockerfile:**
-- Line 2: `FROM node:20-alpine AS builder` ([workdir/repos/product-service/Dockerfile:2](workdir/repos/product-service/Dockerfile#L2))
-- Line 18: `FROM node:20-alpine` ([workdir/repos/product-service/Dockerfile:18](workdir/repos/product-service/Dockerfile#L18))
+**Runtime Port:** `8200` (docker-compose), `3000` (code default)
 
-**Environment Variables:**
-- `PORT=8200` (docker-compose.yml)
+**Docker Images:**
+- Build: `FROM node:20-alpine AS builder` ([Dockerfile:2](workdir/repos/product-service/Dockerfile#L2))
+- Runtime: `FROM node:20-alpine` ([Dockerfile:17](workdir/repos/product-service/Dockerfile#L17))
+
+**Environment Variables (docker-compose.yml):**
+```yaml
+PORT: 8200
+```
 
 **Dependencies:**
-- auth-middleware v0.1.0 ([workdir/repos/product-service/package.json:23](workdir/repos/product-service/package.json#L23))
+- auth-middleware v0.1.0 ([package.json:23](workdir/repos/product-service/package.json#L23))
 - No outbound service calls
 
 ---
@@ -65,41 +94,47 @@ This is a microservices-based e-commerce platform consisting of four core servic
 ### 3. user-service
 
 **Repository:** `bitovi-training/user-service`  
-**Purpose:** NestJS-based authentication service providing user registration (sign up), authentication (sign in), and logout functionality with JWT token generation  
+**Purpose:** Authentication service with JWT token generation  
 **Tech Stack:** NestJS, Node.js 20-alpine, TypeScript, bcrypt  
-**Runtime Port:** `8400` (from docker-compose.yml)  
-**Dockerfile:**
-- Line 2: `FROM node:20-alpine AS builder` ([workdir/repos/user-service/Dockerfile:2](workdir/repos/user-service/Dockerfile#L2))
-- Line 19: `FROM node:20-alpine` ([workdir/repos/user-service/Dockerfile:19](workdir/repos/user-service/Dockerfile#L19))
+**Runtime Port:** `8400` (docker-compose), `3002` (code default)
 
-**Environment Variables:**
-- `PORT=8400` (docker-compose.yml)
+**Docker Images:**
+- Build: `FROM node:20-alpine AS builder` ([Dockerfile:2](workdir/repos/user-service/Dockerfile#L2))
+- Runtime: `FROM node:20-alpine` ([Dockerfile:19](workdir/repos/user-service/Dockerfile#L19))
+
+**Environment Variables (docker-compose.yml):**
+```yaml
+PORT: 8400
+```
 
 **Dependencies:**
 - No external service dependencies
-- **Does NOT use auth-middleware** (generates tokens, doesn't validate)
+- Does NOT use auth-middleware (generates tokens, doesn't validate)
 
 ---
 
 ### 4. loyalty-service
 
 **Repository:** `bitovi-training/loyalty-service`  
-**Purpose:** Manages customer loyalty points including balance calculation, point redemption, and order service integration  
+**Purpose:** Loyalty points management with balance, redemption, and order integration  
 **Tech Stack:** NestJS, Node.js 20-alpine, TypeScript  
-**Runtime Port:** `8300` (from docker-compose.yml)  
-**Dockerfile:**
-- Line 2: `FROM node:20-alpine AS builder` ([workdir/repos/loyalty-service/Dockerfile:2](workdir/repos/loyalty-service/Dockerfile#L2))
-- Line 18: `FROM node:20-alpine` ([workdir/repos/loyalty-service/Dockerfile:18](workdir/repos/loyalty-service/Dockerfile#L18))
+**Runtime Port:** `8300` (docker-compose), `3000` (code default)
 
-**Environment Variables:**
-- `PORT=8300` (docker-compose.yml)
-- `ORDER_SERVICE_URL=http://order-service:8100` (docker-compose.yml)
-- `USER_SERVICE_URL=http://user-service:8400` (docker-compose.yml)
+**Docker Images:**
+- Build: `FROM node:20-alpine AS builder` ([Dockerfile:2](workdir/repos/loyalty-service/Dockerfile#L2))
+- Runtime: `FROM node:20-alpine` ([Dockerfile:18](workdir/repos/loyalty-service/Dockerfile#L18))
+
+**Environment Variables (docker-compose.yml):**
+```yaml
+PORT: 8300
+ORDER_SERVICE_URL: http://order-service:8100
+USER_SERVICE_URL: http://user-service:8400
+```
 
 **Dependencies:**
 - order-service (outbound: fetch orders)
-- user-service (outbound: user validation)
-- auth-middleware v0.1.0 ([workdir/repos/loyalty-service/package.json:23](workdir/repos/loyalty-service/package.json#L23))
+- user-service (outbound: validate users)
+- auth-middleware v0.1.0 ([package.json:23](workdir/repos/loyalty-service/package.json#L23))
 
 ---
 
@@ -111,66 +146,66 @@ This is a microservices-based e-commerce platform consisting of four core servic
 
 | Method | Endpoint | Auth | Role | Purpose | Evidence |
 |--------|----------|------|------|---------|----------|
-| GET | `/health` | ❌ No | - | Health check | [cmd/server/main.go:35](workdir/repos/order-service/cmd/server/main.go#L35) |
-| GET | `/orders` | ✅ Yes | admin | List all orders | [cmd/server/main.go:38](workdir/repos/order-service/cmd/server/main.go#L38) |
-| POST | `/orders` | ✅ Yes | admin | Create new order | [cmd/server/main.go:38](workdir/repos/order-service/cmd/server/main.go#L38) |
-| GET | `/orders/{orderId}` | ✅ Yes | admin | Get order by ID | [cmd/server/main.go:37](workdir/repos/order-service/cmd/server/main.go#L37) |
-| PATCH | `/orders/{orderId}` | ✅ Yes | admin | Update order products | [cmd/server/main.go:37](workdir/repos/order-service/cmd/server/main.go#L37) |
-| POST | `/orders/{orderId}/submit` | ✅ Yes | admin | Submit or cancel order | [cmd/server/main.go:37](workdir/repos/order-service/cmd/server/main.go#L37) |
+| GET | `/health` | ❌ | - | Health check | [main.go:34](workdir/repos/order-service/cmd/server/main.go#L34) |
+| GET | `/orders` | ✅ | admin | List all orders | [main.go:38](workdir/repos/order-service/cmd/server/main.go#L38) |
+| POST | `/orders` | ✅ | admin | Create order | [main.go:38](workdir/repos/order-service/cmd/server/main.go#L38) |
+| GET | `/orders/{orderId}` | ✅ | admin | Get order by ID | [main.go:37](workdir/repos/order-service/cmd/server/main.go#L37) |
+| PATCH | `/orders/{orderId}` | ✅ | admin | Update order | [main.go:37](workdir/repos/order-service/cmd/server/main.go#L37) |
+| POST | `/orders/{orderId}/submit` | ✅ | admin | Submit/cancel order | [main.go:37](workdir/repos/order-service/cmd/server/main.go#L37) |
 
-**Middleware Stack:**
-1. LoggingMiddleware (all endpoints) - [internal/middleware/logging.go:11-26](workdir/repos/order-service/internal/middleware/logging.go#L11-L26)
-2. AuthMiddleware from `github.com/bitovi-corp/auth-middleware-go` (all except /health) - [cmd/server/main.go:37-38](workdir/repos/order-service/cmd/server/main.go#L37-L38)
+**Middleware:**
+- LoggingMiddleware (all endpoints) - [logging.go:11-26](workdir/repos/order-service/internal/middleware/logging.go#L11-L26)
+- AuthMiddleware + RequireRoles("admin") (all except /health) - [main.go:37-38](workdir/repos/order-service/cmd/server/main.go#L37-L38)
 
 ---
 
 ### product-service (Port 8200)
 
-**No route prefix** (verified: no `setGlobalPrefix` in [src/main.ts](workdir/repos/product-service/src/main.ts))  
-**Controller prefix:** `/products` ([src/products/products.controller.ts:10](workdir/repos/product-service/src/products/products.controller.ts#L10))
+**No global prefix** (verified: no `setGlobalPrefix` in codebase)  
+**Controller prefix:** `/products` ([products.controller.ts:10](workdir/repos/product-service/src/products/products.controller.ts#L10))
 
 | Method | Endpoint | Auth | Role | Purpose | Evidence |
 |--------|----------|------|------|---------|----------|
-| GET | `/products` | ❌ No | - | List all products | [src/products/products.controller.ts:28](workdir/repos/product-service/src/products/products.controller.ts#L28) |
-| GET | `/products/:id` | ✅ Yes | - | Get product by ID | [src/products/products.controller.ts:39](workdir/repos/product-service/src/products/products.controller.ts#L39) |
-| POST | `/products` | ✅ Yes | admin | Create product | [src/products/products.controller.ts:63](workdir/repos/product-service/src/products/products.controller.ts#L63) |
+| GET | `/products` | ❌ | - | List all products | [products.controller.ts:28](workdir/repos/product-service/src/products/products.controller.ts#L28) |
+| GET | `/products/:id` | ✅ | - | Get product by ID | [products.controller.ts:39](workdir/repos/product-service/src/products/products.controller.ts#L39) |
+| POST | `/products` | ✅ | admin | Create product | [products.controller.ts:63](workdir/repos/product-service/src/products/products.controller.ts#L63) |
 
-**Auth Middleware:**
-- AuthGuard applied to GET/:id and POST ([src/products/products.controller.ts:38,62](workdir/repos/product-service/src/products/products.controller.ts#L38))
-- RequireRolesGuard(['admin']) applied to POST ([src/products/products.controller.ts:62](workdir/repos/product-service/src/products/products.controller.ts#L62))
+**Auth Guards:**
+- AuthGuard (GET/:id, POST) - [products.controller.ts:38,62](workdir/repos/product-service/src/products/products.controller.ts#L38)
+- RequireRolesGuard(['admin']) (POST only) - [products.controller.ts:62](workdir/repos/product-service/src/products/products.controller.ts#L62)
 
 ---
 
 ### user-service (Port 8400)
 
-**No route prefix** (verified: no `setGlobalPrefix` in [src/main.ts](workdir/repos/user-service/src/main.ts))
+**No global prefix** (verified: no `setGlobalPrefix` in codebase)
 
 | Method | Endpoint | Auth | Purpose | Evidence |
 |--------|----------|------|---------|----------|
-| POST | `/auth/signup` | ❌ No | Register new user | [src/auth/auth.controller.ts:17](workdir/repos/user-service/src/auth/auth.controller.ts#L17) |
-| POST | `/auth/signin` | ❌ No | Authenticate user | [src/auth/auth.controller.ts:31](workdir/repos/user-service/src/auth/auth.controller.ts#L31) |
-| POST | `/auth/logout` | ❌ No | Logout user | [src/auth/auth.controller.ts:45](workdir/repos/user-service/src/auth/auth.controller.ts#L45) |
-| GET | `/users/:userId/validate` | ❌ No | Check if user exists | [src/user/user.controller.ts:13](workdir/repos/user-service/src/user/user.controller.ts#L13) |
-| GET | `/health` | ❌ No | Health check | [src/health/health.controller.ts:8](workdir/repos/user-service/src/health/health.controller.ts#L8) |
+| POST | `/auth/signup` | ❌ | Register user | [auth.controller.ts:17](workdir/repos/user-service/src/auth/auth.controller.ts#L17) |
+| POST | `/auth/signin` | ❌ | Authenticate user | [auth.controller.ts:31](workdir/repos/user-service/src/auth/auth.controller.ts#L31) |
+| POST | `/auth/logout` | ✅ | Logout user | [auth.controller.ts:45](workdir/repos/user-service/src/auth/auth.controller.ts#L45) |
+| GET | `/users/:userId/validate` | ❌ | Check user exists | [user.controller.ts:13](workdir/repos/user-service/src/user/user.controller.ts#L13) |
+| GET | `/health` | ❌ | Health check | [health.controller.ts:8](workdir/repos/user-service/src/health/health.controller.ts#L8) |
 
-**⚠️ Security Note:** All endpoints are publicly accessible. This service generates tokens but does not validate them (intentional - acts as authentication provider).
+**Note:** Only `/auth/logout` requires authentication. All other endpoints are public (intentional - this is the auth provider).
 
 ---
 
 ### loyalty-service (Port 8300)
 
-**No route prefix** (verified: no `setGlobalPrefix` in [src/main.ts](workdir/repos/loyalty-service/src/main.ts))  
-**Controller prefix:** `/loyalty` ([src/loyalty/loyalty.controller.ts:13](workdir/repos/loyalty-service/src/loyalty/loyalty.controller.ts#L13))
+**No global prefix** (verified: no `setGlobalPrefix` in codebase)  
+**Controller prefix:** `/loyalty` ([loyalty.controller.ts:13](workdir/repos/loyalty-service/src/loyalty/loyalty.controller.ts#L13))
 
 | Method | Endpoint | Auth | Purpose | Evidence |
 |--------|----------|------|---------|----------|
-| GET | `/loyalty/:userId/balance` | ✅ Yes | Get loyalty balance | [src/loyalty/loyalty.controller.ts:22](workdir/repos/loyalty-service/src/loyalty/loyalty.controller.ts#L22) |
-| POST | `/loyalty/:userId/redeem` | ✅ Yes | Redeem loyalty points | [src/loyalty/loyalty.controller.ts:38](workdir/repos/loyalty-service/src/loyalty/loyalty.controller.ts#L38) |
-| GET | `/loyalty/:userId/redemptions` | ✅ Yes | Get redemption history | [src/loyalty/loyalty.controller.ts:62](workdir/repos/loyalty-service/src/loyalty/loyalty.controller.ts#L62) |
-| POST | `/loyalty/orders` | ✅ Yes | Accrue points for order | [src/loyalty/loyalty.controller.ts:73](workdir/repos/loyalty-service/src/loyalty/loyalty.controller.ts#L73) |
+| GET | `/loyalty/:userId/balance` | ✅ | Get points balance | [loyalty.controller.ts:22](workdir/repos/loyalty-service/src/loyalty/loyalty.controller.ts#L22) |
+| POST | `/loyalty/:userId/redeem` | ✅ | Redeem points | [loyalty.controller.ts:38](workdir/repos/loyalty-service/src/loyalty/loyalty.controller.ts#L38) |
+| GET | `/loyalty/:userId/redemptions` | ✅ | Get redemption history | [loyalty.controller.ts:62](workdir/repos/loyalty-service/src/loyalty/loyalty.controller.ts#L62) |
+| POST | `/loyalty/orders` | ✅ | Accrue order points | [loyalty.controller.ts:73](workdir/repos/loyalty-service/src/loyalty/loyalty.controller.ts#L73) |
 
-**Auth Middleware:**
-- AuthGuard from `@bitovi-corp/auth-middleware` applied to all endpoints ([src/loyalty/loyalty.controller.ts:23,39,63,75](workdir/repos/loyalty-service/src/loyalty/loyalty.controller.ts#L23))
+**Auth Guards:**
+- AuthGuard from `@bitovi-corp/auth-middleware` applied to all endpoints
 
 ---
 
@@ -181,16 +216,15 @@ This is a microservices-based e-commerce platform consisting of four core servic
 ```
 ┌─────────────────┐
 │  user-service   │
-│   (port 8400)   │◄──────────────────────────┐
-└─────────────────┘                           │
-         │                                    │
-         │ (JWT generation)                   │ validate user
-         │                                    │
-         ▼                                    │
-┌─────────────────┐      validate      ┌─────────────────┐
-│  order-service  │◄──────products─────│ product-service │
-│   (port 8100)   │                    │   (port 8200)   │
-└─────────────────┘                    └─────────────────┘
+│   (port 8400)   │◄──────────────────────┐
+└─────────────────┘                       │
+         │                                │ validate user
+         │ (JWT generation)               │
+         ▼                                │
+┌─────────────────┐     validate    ┌─────────────────┐
+│  order-service  │◄────products────│ product-service │
+│   (port 8100)   │                 │   (port 8200)   │
+└─────────────────┘                 └─────────────────┘
          │
          │ accrue points
          ▼
@@ -199,13 +233,13 @@ This is a microservices-based e-commerce platform consisting of four core servic
 │   (port 8300)   │
 └─────────────────┘
          │
-         └────────fetch orders───────┐
-                                     │
-                                     ▼
-                            ┌─────────────────┐
-                            │  order-service  │
-                            │   (port 8100)   │
-                            └─────────────────┘
+         └────fetch orders────┐
+                              │
+                              ▼
+                     ┌─────────────────┐
+                     │  order-service  │
+                     │   (port 8100)   │
+                     └─────────────────┘
 ```
 
 ---
@@ -214,13 +248,12 @@ This is a microservices-based e-commerce platform consisting of four core servic
 
 ### Integration 1: order-service → product-service
 
-**Purpose:** Validate product exists and get pricing information
-
-**Source:** [workdir/repos/order-service/internal/services/product_client.go:45-73](workdir/repos/order-service/internal/services/product_client.go#L45-L73)
+**Purpose:** Validate product exists and retrieve pricing
 
 **Configuration:**
-- Base URL Env Var: `PRODUCT_SERVICE_URL`
-- Docker Compose Value: `http://product-service:8200`
+- Env Var: `PRODUCT_SERVICE_URL`
+- Docker Value: `http://product-service:8200`
+- Code Reference: [config.go](workdir/repos/order-service/internal/config/config.go)
 
 **Request:**
 - Method: `GET`
@@ -242,8 +275,10 @@ This is a microservices-based e-commerce platform consisting of four core servic
 ```
 
 **Called From:**
-- CreateOrder flow ([internal/handlers/orders.go](workdir/repos/order-service/internal/handlers/orders.go))
-- UpdateOrderProducts flow ([internal/handlers/orders.go](workdir/repos/order-service/internal/handlers/orders.go))
+- CreateOrder handler ([orders.go](workdir/repos/order-service/internal/handlers/orders.go))
+- UpdateOrder handler ([orders.go](workdir/repos/order-service/internal/handlers/orders.go))
+
+**Evidence:** [product_client.go:45-73](workdir/repos/order-service/internal/services/product_client.go#L45-L73)
 
 ---
 
@@ -251,11 +286,10 @@ This is a microservices-based e-commerce platform consisting of four core servic
 
 **Purpose:** Calculate and store loyalty points for submitted orders
 
-**Source:** [workdir/repos/order-service/internal/services/loyalty_client.go:46-69](workdir/repos/order-service/internal/services/loyalty_client.go#L46-L69)
-
 **Configuration:**
-- Base URL Env Var: `LOYALTY_SERVICE_URL`
-- Docker Compose Value: `http://loyalty-service:8300`
+- Env Var: `LOYALTY_SERVICE_URL`
+- Docker Value: `http://loyalty-service:8300`
+- Code Reference: [config.go](workdir/repos/order-service/internal/config/config.go)
 
 **Request:**
 - Method: `POST`
@@ -265,7 +299,7 @@ This is a microservices-based e-commerce platform consisting of four core servic
   - `Content-Type: application/json` ([loyalty_client.go:66](workdir/repos/order-service/internal/services/loyalty_client.go#L66))
   - `Authorization: {forwarded token}` ([loyalty_client.go:68-70](workdir/repos/order-service/internal/services/loyalty_client.go#L68-L70))
 
-**Request Payload:** ([loyalty_client.go:23-27](workdir/repos/order-service/internal/services/loyalty_client.go#L23-L27))
+**Request Payload:**
 ```json
 {
   "orderId": "string (UUID)",
@@ -273,11 +307,12 @@ This is a microservices-based e-commerce platform consisting of four core servic
   "totalPrice": 0.0
 }
 ```
+**Evidence:** [loyalty_client.go:23-27](workdir/repos/order-service/internal/services/loyalty_client.go#L23-L27)
 
-**Payload Validation (receiver side):** [workdir/repos/loyalty-service/src/loyalty/dto/accrue-points-request.dto.ts:3-14](workdir/repos/loyalty-service/src/loyalty/dto/accrue-points-request.dto.ts#L3-L14)
-- `orderId`: UUID, required
-- `userId`: UUID, required
-- `totalPrice`: number, min 0, required
+**Payload Validation (receiver):**
+- `orderId`: UUID, required ([accrue-points-request.dto.ts:4-6](workdir/repos/loyalty-service/src/loyalty/dto/accrue-points-request.dto.ts#L4-L6))
+- `userId`: UUID, required ([accrue-points-request.dto.ts:8-10](workdir/repos/loyalty-service/src/loyalty/dto/accrue-points-request.dto.ts#L8-L10))
+- `totalPrice`: number, min 0, required ([accrue-points-request.dto.ts:12-14](workdir/repos/loyalty-service/src/loyalty/dto/accrue-points-request.dto.ts#L12-L14))
 
 **Response:** Status 201
 ```json
@@ -287,10 +322,11 @@ This is a microservices-based e-commerce platform consisting of four core servic
   "points": 0
 }
 ```
-Evidence: [loyalty_client.go:29-33](workdir/repos/order-service/internal/services/loyalty_client.go#L29-L33)
 
 **Called From:**
-- SubmitOrder flow when order status changes to PROCESSING ([internal/handlers/orders.go](workdir/repos/order-service/internal/handlers/orders.go))
+- SubmitOrder handler when status changes to PROCESSING ([orders.go](workdir/repos/order-service/internal/handlers/orders.go))
+
+**Evidence:** [loyalty_client.go:46-69](workdir/repos/order-service/internal/services/loyalty_client.go#L46-L69)
 
 ---
 
@@ -298,11 +334,9 @@ Evidence: [loyalty_client.go:29-33](workdir/repos/order-service/internal/service
 
 **Purpose:** Fetch order data to calculate loyalty balances
 
-**Source:** [workdir/repos/loyalty-service/src/clients/order-client.ts:46-77](workdir/repos/loyalty-service/src/clients/order-client.ts#L46-L77)
-
 **Configuration:**
-- Base URL Env Var: `ORDER_SERVICE_URL`
-- Docker Compose Value: `http://order-service:8100`
+- Env Var: `ORDER_SERVICE_URL`
+- Docker Value: `http://order-service:8100`
 - Fallback: `http://localhost:8100` ([order-client.ts:37](workdir/repos/loyalty-service/src/clients/order-client.ts#L37))
 
 **Request 1: Get All Orders**
@@ -310,7 +344,7 @@ Evidence: [loyalty_client.go:29-33](workdir/repos/order-service/internal/service
 - Path: `/orders`
 - Full URL: `${ORDER_SERVICE_URL}/orders`
 - Headers:
-  - `Content-Type: application/json` ([order-client.ts:49-51](workdir/repos/loyalty-service/src/clients/order-client.ts#L49-L51))
+  - `Content-Type: application/json`
   - `Authorization: Bearer {token}` (if provided) ([order-client.ts:53-55](workdir/repos/loyalty-service/src/clients/order-client.ts#L53-L55))
 
 **Response:**
@@ -330,7 +364,7 @@ Evidence: [loyalty_client.go:29-33](workdir/repos/order-service/internal/service
   total: number
 }
 ```
-Evidence: [order-client.ts:11-28](workdir/repos/loyalty-service/src/clients/order-client.ts#L11-L28)
+**Evidence:** [order-client.ts:11-28](workdir/repos/loyalty-service/src/clients/order-client.ts#L11-L28)
 
 **Request 2: Get Order by ID**
 - Method: `GET`
@@ -343,13 +377,11 @@ Evidence: [order-client.ts:11-28](workdir/repos/loyalty-service/src/clients/orde
 
 ### Integration 4: loyalty-service → user-service
 
-**Purpose:** Validate that a user exists before accruing/redeeming points
-
-**Source:** [workdir/repos/loyalty-service/src/clients/user-client.ts:13-46](workdir/repos/loyalty-service/src/clients/user-client.ts#L13-L46)
+**Purpose:** Validate user exists before accruing/redeeming points
 
 **Configuration:**
-- Base URL Env Var: `USER_SERVICE_URL`
-- Docker Compose Value: `http://user-service:8400`
+- Env Var: `USER_SERVICE_URL`
+- Docker Value: `http://user-service:8400`
 - Fallback: `http://localhost:8400`
 
 **Request:**
@@ -367,29 +399,30 @@ Evidence: [order-client.ts:11-28](workdir/repos/loyalty-service/src/clients/orde
   "userId": "string"
 }
 ```
-Evidence: [user-client.ts:24](workdir/repos/loyalty-service/src/clients/user-client.ts#L24)
 
 **Called From:**
-- accruePoints ([src/loyalty/loyalty.service.ts](workdir/repos/loyalty-service/src/loyalty/loyalty.service.ts))
-- redeemPoints ([src/loyalty/loyalty.service.ts](workdir/repos/loyalty-service/src/loyalty/loyalty.service.ts))
-- getBalance ([src/loyalty/loyalty.service.ts](workdir/repos/loyalty-service/src/loyalty/loyalty.service.ts))
-- getRedemptionHistory ([src/loyalty/loyalty.service.ts](workdir/repos/loyalty-service/src/loyalty/loyalty.service.ts))
+- accruePoints ([loyalty.service.ts](workdir/repos/loyalty-service/src/loyalty/loyalty.service.ts))
+- redeemPoints ([loyalty.service.ts](workdir/repos/loyalty-service/src/loyalty/loyalty.service.ts))
+- getBalance ([loyalty.service.ts](workdir/repos/loyalty-service/src/loyalty/loyalty.service.ts))
+- getRedemptionHistory ([loyalty.service.ts](workdir/repos/loyalty-service/src/loyalty/loyalty.service.ts))
+
+**Evidence:** [user-client.ts:13-46](workdir/repos/loyalty-service/src/clients/user-client.ts#L13-L46)
 
 ---
 
 ## Authentication & Authorization Model
 
-### Architecture Overview
+### Architecture
 
 **Model:** Centralized token generation + distributed validation
 
 1. **Token Provider:** user-service generates JWT tokens
-2. **Token Consumers:** order-service, product-service, loyalty-service validate tokens using shared auth middleware
-3. **Validation:** Each service independently validates JWT structure and claims (no central auth service)
+2. **Token Consumers:** order-service, product-service, loyalty-service validate via auth middleware
+3. **Validation:** Each service independently validates JWT structure and claims (no central gateway)
 
 ### JWT Token Structure
 
-**Generated By:** user-service ([src/auth/jwt.service.ts](workdir/repos/user-service/src/auth/jwt.service.ts))
+**Generated By:** user-service ([jwt.service.ts](workdir/repos/user-service/src/auth/jwt.service.ts))
 
 **Token Format:**
 ```json
@@ -402,13 +435,13 @@ Evidence: [user-client.ts:24](workdir/repos/loyalty-service/src/clients/user-cli
 }
 ```
 
-**Token Characteristics:**
-- Algorithm: `none` (⚠️ **MOCK IMPLEMENTATION** - no cryptographic signing)
+**Characteristics:**
+- Algorithm: `none` (⚠️ **MOCK** - no cryptographic signing)
 - Expiration: 24 hours (production) or 30 days (development)
 - Structure: `<base64url_header>.<base64url_payload>.` (no signature)
-- Evidence: [workdir/repos/user-service/src/auth/jwt.service.ts:26-69](workdir/repos/user-service/src/auth/jwt.service.ts#L26-L69)
+- Evidence: [jwt.service.ts:26-69](workdir/repos/user-service/src/auth/jwt.service.ts#L26-L69)
 
-⚠️ **CRITICAL SECURITY WARNING:** Tokens lack cryptographic signatures and are NOT production-ready.
+⚠️ **CRITICAL WARNING:** Tokens lack signatures and are NOT production-ready.
 
 ---
 
@@ -416,71 +449,71 @@ Evidence: [user-client.ts:24](workdir/repos/loyalty-service/src/clients/user-cli
 
 #### Node/NestJS: @bitovi-corp/auth-middleware v0.1.0
 
-**Repository:** `bitovi-corp/auth-middleware`  
 **Used By:** product-service, loyalty-service
 
 **Exports:**
 - `AuthGuard` - JWT validation guard
-- `RequireRolesGuard` - Role-based access control (RBAC)
+- `RequireRolesGuard` - Role-based access control (any-of)
+- `RequireAllRolesGuard` - RBAC (all-of)
 - `@User()` decorator - Extract user claims
 - `@Roles()` decorator - Declare required roles
 - `AuthModule` - NestJS module
 
-**JWT Validation Logic:** [workdir/repos/auth-middleware/src/guards/auth.guard.ts:23-82](workdir/repos/auth-middleware/src/guards/auth.guard.ts#L23-L82)
-- Validates 3-part JWT structure (header.payload.signature)
+**JWT Validation:** [auth.guard.ts:23-82](workdir/repos/auth-middleware/src/guards/auth.guard.ts#L23-L82)
+- Validates 3-part structure (header.payload.signature)
 - Base64url decodes payload
-- Checks required claims: `sub`, `email`
-- Extracts optional claims: `roles` (defaults to []), `exp`, `iat`
+- Checks required: `sub`, `email`
+- Extracts optional: `roles` (defaults []), `exp`, `iat`
 - **Does NOT verify signature** (mock mode)
-- Accepts expired tokens with warning log
+- Accepts expired tokens with warning
 
-**Role Checking:** [workdir/repos/auth-middleware/src/guards/require-roles.guard.ts](workdir/repos/auth-middleware/src/guards/require-roles.guard.ts)
-- Supports "any-of" and "all-of" role matching
-- Case-sensitive role comparison
-- Returns 403 Forbidden if roles insufficient
+**Role Checking:** [require-roles.guard.ts](workdir/repos/auth-middleware/src/guards/require-roles.guard.ts)
+- Any-of: User needs ONE of specified roles
+- All-of: User needs ALL specified roles
+- Case-sensitive comparison
+- Returns 403 if insufficient
 
 ---
 
 #### Go: github.com/bitovi-corp/auth-middleware-go v0.2.0
 
-**Repository:** `bitovi-corp/auth-middleware-go`  
 **Used By:** order-service
 
 **Exports:**
 - `AuthMiddleware` - Basic JWT authentication
 - `RequireRoles(roles ...string)` - Any-of role checking
 - `RequireAllRoles(roles ...string)` - All-of role checking
-- `GetUserClaims(r *http.Request)` - Context retrieval helper
+- `GetUserClaims(r *http.Request)` - Context retrieval
 - `UserClaims` struct - Token claims model
 
-**JWT Validation Logic:** [workdir/repos/auth-middleware-go/middleware/auth.go:40-91](workdir/repos/auth-middleware-go/middleware/auth.go#L40-L91)
-- Validates 3-part JWT structure
+**JWT Validation:** [auth.go:40-91](workdir/repos/auth-middleware-go/middleware/auth.go#L40-L91)
+- Validates 3-part structure
 - Base64-decodes payload
-- Checks required claims: `sub`, `email`, `roles`, `exp`
+- Checks required: `sub`, `email`, `roles`, `exp`
 - **Does NOT verify signature** (mock mode)
-- Accepts expired tokens with warning log
+- Accepts expired tokens with warning
 
-**Role Checking:** [middleware/auth.go:93-195](workdir/repos/auth-middleware-go/middleware/auth.go#L93-L195)
-- `RequireRoles`: Any-of (user needs at least one specified role)
-- `RequireAllRoles`: All-of (user needs all specified roles)
-- Returns 403 Forbidden with JSON error
+**Role Checking:** [auth.go:93-195](workdir/repos/auth-middleware-go/middleware/auth.go#L93-L195)
+- `RequireRoles`: Any-of (≥1 specified role)
+- `RequireAllRoles`: All-of (all specified roles)
+- Returns 403 with JSON error
 
 ---
 
 ### Role Definitions
 
-Based on seeded users ([workdir/repos/user-service/src/user/user.repository.ts:13-48](workdir/repos/user-service/src/user/user.repository.ts#L13-L48)):
+**Based on seeded users:** [user.repository.ts:13-48](workdir/repos/user-service/src/user/user.repository.ts#L13-L48)
 
-| Role | Permissions | Evidence |
-|------|-------------|----------|
-| `admin` | Full access to all order, product, loyalty operations | order-service, product-service |
-| `user` | Basic authenticated access | Default role for new signups |
-| `manager` | Not currently used in RBAC rules | Seeded but no guards check for it |
+| Role | Permissions | Usage |
+|------|-------------|-------|
+| `admin` | Full access to orders, products, loyalty | order-service, product-service |
+| `user` | Basic authenticated access | Default for new signups |
+| `manager` | Not currently enforced | Seeded but unused |
 
 **RBAC Usage:**
-- **order-service:** Requires `admin` role for all order operations ([cmd/server/main.go:37-38](workdir/repos/order-service/cmd/server/main.go#L37-L38))
-- **product-service:** Requires `admin` role for POST /products ([src/products/products.controller.ts:62](workdir/repos/product-service/src/products/products.controller.ts#L62))
-- **loyalty-service:** Requires authentication but no role restrictions (any authenticated user)
+- **order-service:** Requires `admin` for all order operations ([main.go:37-38](workdir/repos/order-service/cmd/server/main.go#L37-L38))
+- **product-service:** Requires `admin` for POST /products ([products.controller.ts:62](workdir/repos/product-service/src/products/products.controller.ts#L62))
+- **loyalty-service:** Requires authentication but no role restrictions
 
 ---
 
@@ -489,32 +522,38 @@ Based on seeded users ([workdir/repos/user-service/src/user/user.repository.ts:1
 **Pattern:** Services forward `Authorization: Bearer {token}` to downstream services
 
 **Evidence:**
-1. **order-service → product-service:** [internal/services/product_client.go:59-65](workdir/repos/order-service/internal/services/product_client.go#L59-L65)
-2. **order-service → loyalty-service:** [internal/services/loyalty_client.go:68-70](workdir/repos/order-service/internal/services/loyalty_client.go#L68-L70)
-3. **loyalty-service → order-service:** [src/clients/order-client.ts:53-55](workdir/repos/loyalty-service/src/clients/order-client.ts#L53-L55)
-4. **loyalty-service → user-service:** ❌ **NO AUTH FORWARDED** (validation endpoint is service-to-service)
+1. order-service → product-service: [product_client.go:59-65](workdir/repos/order-service/internal/services/product_client.go#L59-L65)
+2. order-service → loyalty-service: [loyalty_client.go:68-70](workdir/repos/order-service/internal/services/loyalty_client.go#L68-L70)
+3. loyalty-service → order-service: [order-client.ts:53-55](workdir/repos/loyalty-service/src/clients/order-client.ts#L53-L55)
+4. loyalty-service → user-service: ❌ **NO AUTH** (validation endpoint is service-to-service)
 
 ---
 
-## Test Coverage (api-tests repo)
+## Test Coverage (api-tests)
 
 **Repository:** `bitovi-training/api-tests`  
-**Framework:** Jest + TypeScript  
-**Test Suites:** 5 suites covering 100+ scenarios
+**Framework:** Jest + TypeScript + Axios
 
 **Services Tested:**
-1. **user-service** - 5 endpoints, 20+ test cases
-2. **order-service** - 6 endpoints, 40+ test cases
+1. **user-service** - 5 endpoints, 12 test cases
+2. **order-service** - 6 endpoints, 35+ test cases
 3. **product-service** - 3 endpoints, 15+ test cases
-4. **loyalty-service** - 4 endpoints, 25+ test cases
+4. **loyalty-service** - 4 endpoints, 14 test cases
+5. **E2E Integration** - 7 complete flow scenarios
 
-**Key Test Scenarios:**
-- Complete purchase flow: signup → browse → create order → submit → loyalty accrual → redemption
-- RBAC enforcement (401/403 errors for missing/insufficient roles)
-- Validation rules (400 errors for invalid payloads)
+**Key Scenarios:**
+- Complete purchase flow: signup → browse → order → submit → accrue points → redeem
+- RBAC enforcement (401/403 for missing/invalid roles)
+- Validation errors (400 for invalid payloads)
 - Service-to-service integration (order→product, order→loyalty)
 
-**Evidence:** [workdir/repos/api-tests/src](workdir/repos/api-tests/src)
+**Auth Testing:**
+- Mock JWT generation with configurable roles
+- Bearer token authentication patterns
+- Case-sensitive role validation
+- Missing/malformed token scenarios
+
+**Evidence:** Test files in [src/](workdir/repos/api-tests/src)
 
 ---
 
@@ -522,64 +561,59 @@ Based on seeded users ([workdir/repos/user-service/src/user/user.repository.ts:1
 
 ### Issue 1: Insecure JWT Implementation
 
-**Problem:** Both auth middleware implementations lack cryptographic signature verification
+**Problem:** Both auth middleware implementations lack signature verification
 
 **Impact:** Tokens can be forged by base64-encoding arbitrary claims
 
 **Evidence:**
-- Node: [workdir/repos/auth-middleware/src/guards/auth.guard.ts:23-82](workdir/repos/auth-middleware/src/guards/auth.guard.ts#L23-L82)
-- Go: [workdir/repos/auth-middleware-go/middleware/auth.go:40-91](workdir/repos/auth-middleware-go/middleware/auth.go#L40-91)
+- Node: [auth.guard.ts:23-82](workdir/repos/auth-middleware/src/guards/auth.guard.ts#L23-L82)
+- Go: [auth.go:40-91](workdir/repos/auth-middleware-go/middleware/auth.go#L40-L91)
 
 **Status:** ⚠️ **INTENTIONAL FOR DEMO** - Not production-ready
 
 ---
 
-### Issue 2: Port Mismatch (service-internal vs docker-compose)
+### Issue 2: Port Mismatch
 
 **Problem:** Services default to different ports in code vs docker-compose
 
 **Details:**
-- **product-service:** Code defaults to 3000, docker-compose overrides to 8200
-- **loyalty-service:** Code defaults to 3000, docker-compose overrides to 8300
-- **user-service:** Code defaults to 3002, docker-compose overrides to 8400
+- product-service: Code 3000, docker 8200
+- loyalty-service: Code 3000, docker 8300
+- user-service: Code 3002, docker 8400
+- order-service: Code 8080, docker 8100
 
-**Evidence:**
-- [workdir/repos/product-service/src/main.ts:11](workdir/repos/product-service/src/main.ts#L11)
-- [workdir/repos/loyalty-service/src/main.ts:11](workdir/repos/loyalty-service/src/main.ts#L11)
-- [workdir/repos/user-service/src/main.ts:9](workdir/repos/user-service/src/main.ts#L9)
-- docker-compose.yml environment overrides
+**Impact:** Services won't communicate correctly outside docker-compose without env vars
 
-**Impact:** Services won't communicate correctly if run outside docker-compose without env vars
-
-**Resolution:** Environment variables correctly configured in docker-compose.yml
+**Mitigation:** docker-compose.yml correctly overrides via PORT environment variable
 
 ---
 
-### Issue 3: In-Memory Storage (All Services)
+### Issue 3: In-Memory Storage
 
 **Problem:** All services use ephemeral in-memory storage
 
-**Impact:** Data lost on restart, not suitable for production
+**Impact:** Data lost on restart, not production-suitable
 
 **Evidence:**
-- order-service: [internal/handlers/orders.go](workdir/repos/order-service/internal/handlers/orders.go) (mock data)
-- product-service: [src/products/products.service.ts](workdir/repos/product-service/src/products/products.service.ts) (Map storage)
-- user-service: [src/user/user.repository.ts](workdir/repos/user-service/src/user/user.repository.ts) (Map storage)
-- loyalty-service: [src/loyalty/loyalty.service.ts](workdir/repos/loyalty-service/src/loyalty/loyalty.service.ts) (Map storage)
+- order-service: Mock data in handlers
+- product-service: [products.service.ts](workdir/repos/product-service/src/products/products.service.ts) Map storage
+- user-service: [user.repository.ts](workdir/repos/user-service/src/user/user.repository.ts) Map storage
+- loyalty-service: [loyalty.service.ts](workdir/repos/loyalty-service/src/loyalty/loyalty.service.ts) Map storage
 
 **Status:** ✅ **INTENTIONAL FOR DEMO**
 
 ---
 
-### Issue 4: Inefficient Order Fetching in loyalty-service
+### Issue 4: Inefficient Order Fetching
 
 **Problem:** loyalty-service fetches ALL orders then filters client-side by userId
 
-**Evidence:** [workdir/repos/loyalty-service/src/clients/order-client.ts:119-127](workdir/repos/loyalty-service/src/clients/order-client.ts#L119-L127)
+**Evidence:** [order-client.ts:119-127](workdir/repos/loyalty-service/src/clients/order-client.ts#L119-L127)
 
 **Impact:** Performance degrades as order count grows
 
-**Recommendation:** order-service should expose `GET /orders?userId={id}` query param
+**Recommendation:** order-service should expose query param: `GET /orders?userId={id}`
 
 **Status:** ⚠️ **SPEC GAP**
 
@@ -587,97 +621,19 @@ Based on seeded users ([workdir/repos/user-service/src/user/user.repository.ts:1
 
 ### Issue 5: No API Versioning
 
-**Finding:** No services use `/api/v1` or similar route prefixes
+**Finding:** No services use `/api/v1` or similar prefixes
 
 **Verification:**
-- Searched for `setGlobalPrefix`, `app.use`, route prefixes in all services
-- Result: No versioning found
+- Searched for `setGlobalPrefix` in all TypeScript services (0 results)
+- Verified Go service uses root-level routes
 
-**Impact:** Breaking changes cannot be phased in gracefully
+**Impact:** Breaking changes require synchronized deployments
 
 **Status:** ✅ **CONFIRMED - NO VERSIONING**
 
 ---
 
-## Architecture Decisions & Rationale
-
-### ADR-001: Mock JWT (No Signature Verification)
-
-**Decision:** JWT tokens lack cryptographic signatures
-
-**Rationale:** Demo/training environment optimized for simplicity over security
-
-**Consequences:**
-- ✅ Easy local testing without key management
-- ✅ Tokens human-readable (base64 decode)
-- ❌ Not production-ready
-- ❌ Tokens can be forged
-
----
-
-### ADR-002: In-Memory Storage
-
-**Decision:** All services use ephemeral in-memory storage
-
-**Rationale:** Simplifies local development, no database setup required
-
-**Consequences:**
-- ✅ Fast startup, no migrations
-- ✅ Easy to reset state (restart service)
-- ❌ Data lost on restart
-- ❌ No persistence layer to test against
-
----
-
-### ADR-003: Distributed Auth Validation
-
-**Decision:** Each service independently validates tokens (no central auth gateway)
-
-**Rationale:** True microservices pattern, services are self-contained
-
-**Consequences:**
-- ✅ No single point of failure
-- ✅ Services can run independently
-- ✅ Shared auth logic via npm/go packages
-- ❌ Token revocation not possible (stateless JWT)
-- ❌ Auth logic updates require redeploying all services
-
----
-
-### ADR-004: Mixed Tech Stack (Go + Node.js)
-
-**Decision:** order-service in Go, others in NestJS/Node.js
-
-**Rationale:** Demonstrate polyglot microservices architecture
-
-**Consequences:**
-- ✅ Use best tool per service (Go for performance-critical order processing)
-- ✅ Realistic training environment (mimics real-world heterogeneity)
-- ❌ Requires maintaining two auth middleware implementations
-- ❌ More complex tooling/deployment
-
----
-
-## Repository Evidence Summary
-
-### Repositories Analyzed
-
-| Repository | Owner | Status | Purpose |
-|------------|-------|--------|---------|
-| service-infra | bitovi-training | ✅ Cloned | Docker Compose orchestration |
-| order-service | bitovi-training | ✅ Cloned | Order management (Go) |
-| product-service | bitovi-training | ✅ Cloned | Product catalog (NestJS) |
-| user-service | bitovi-training | ✅ Cloned | Authentication provider (NestJS) |
-| loyalty-service | bitovi-training | ✅ Cloned | Loyalty points management (NestJS) |
-| auth-middleware | bitovi-corp | ✅ Cloned | Node.js auth library |
-| auth-middleware-go | bitovi-corp | ✅ Cloned | Go auth library |
-| api-tests | bitovi-training | ✅ Cloned | Integration test suite |
-
-**All repos cloned to:** `/Users/nikita/solutions-architect/workdir/repos/`
-
----
-
-## Appendix: Environment Variable Reference
+## Environment Variables Reference
 
 ### order-service
 ```bash
@@ -694,7 +650,7 @@ PORT=8200
 ### user-service
 ```bash
 PORT=8400
-NODE_ENV=development  # Optional, affects token expiry
+NODE_ENV=development  # Affects token expiry (24h prod, 30d dev)
 ```
 
 ### loyalty-service
@@ -706,34 +662,34 @@ USER_SERVICE_URL=http://user-service:8400
 
 ---
 
-## Appendix: Seeded Test Users
+## Seeded Test Users
 
-**Source:** [workdir/repos/user-service/src/user/user.repository.ts:13-48](workdir/repos/user-service/src/user/user.repository.ts#L13-L48)
+**Source:** [user.repository.ts:13-48](workdir/repos/user-service/src/user/user.repository.ts#L13-L48)
 
-**All users have password:** `password123`
+**All users password:** `password123`
 
 | Email | Roles | Use Case |
 |-------|-------|----------|
-| admin@example.com | admin, user | Full access to order/product management |
-| user@example.com | user | Basic authenticated access |
-| manager@example.com | manager, user | Currently unused role |
+| admin@example.com | admin, user | Full order/product management |
+| user@example.com | user | Basic access |
+| manager@example.com | manager, user | Reserved (unused) |
 | test@example.com | user | Test account |
-
----
-
-**End of Systems Map**
 
 ---
 
 ## Generation Metadata
 
-- **Generated:** 2026-02-27
-- **Tool:** Copilot with compose-first discovery
-- **Source Repositories:** 8 repos (local clones)
-- **Subagents Used:** 7 parallel analysis agents
-- **Validation Checks:**
-  - ✅ Route prefix verification (none found)
-  - ✅ Dockerfile FROM lines extracted
-  - ✅ Endpoint verification via controller/handler registration
-  - ✅ Integration payload verification via client code + DTOs
-  - ✅ Auth header forwarding patterns confirmed
+**Generated:** 2026-02-28  
+**Method:** Compose-first discovery with parallel subagent analysis  
+**Repositories:** 8 cloned to local workdir/repos/  
+
+**Validation Performed:**
+- ✅ Route prefix verification (none found)
+- ✅ Dockerfile FROM lines extracted
+- ✅ Endpoint verification via route registration
+- ✅ Integration payload verification via client code + DTOs
+- ✅ Auth header forwarding confirmed
+
+---
+
+**End of Systems Map**

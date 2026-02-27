@@ -7,6 +7,11 @@ You are generating a cross-repository systems map document.
 - You MUST discover and analyze shared auth middleware repos and api-tests if present.
 - You MUST validate and correct all routes/payloads/auth claims before writing the final output.
 
+## Output hygiene (VERY IMPORTANT)
+- You MUST produce exactly ONE final artifact: `output/SYSTEMS_MAP.md`.
+- You MUST NOT create any other output files (no per-repo analysis reports, no middleware reports, no api-tests report).
+- Subagents may take notes internally, but all final findings must be consolidated into `output/SYSTEMS_MAP.md` only.
+
 ## Required workflow (in order)
 
 ### 1) Compose-first discovery (source of truth for services + ports)
@@ -31,22 +36,21 @@ You are generating a cross-repository systems map document.
   - Prefer `rg "<pattern>" .` if available, else `grep -R "<pattern>" -n .`
 - Discover additional repos from:
   - Go: `go.mod`, import paths, module names
-  - Node: `package.json` deps, `@bitovi-training/*` usage, monorepo references
-  - Docs: references to repo names, “see repo …”, CI config
+  - Node: `package.json` deps (especially `@bitovi-corp/*`), lockfiles, workspace/monorepo references
+  - Docs/CI: references to repo names, “see repo …”, pipeline config
 - If new repos are discovered, add them to the relevant repo set and repeat (clone + search).
 
 ### 3) Mandatory repo discovery targets (must be found if they exist)
 You MUST attempt to locate and analyze these repositories:
 
-- `auth-middleware` (Node) if any service depends on `@bitovi-training/auth-middleware`
-- `auth-middleware-go` if any Go service uses an auth middleware module/package
-- `api-tests` repo (search for it in code/config/docs or org references); if found, clone and analyze
+- `bitovi-corp/auth-middleware` if any service depends on `@bitovi-corp/auth-middleware`
+- `bitovi-corp/auth-middleware-go` if any Go service uses an auth middleware module/package
+- `bitovi-training/api-tests` repo (search for it in code/config/docs); if found, clone and analyze
 
 If any of these are referenced but cannot be accessed, state **Unknown** and explain why (e.g., repo not found / permission).
 
 ### 4) Subagents (parallel analysis)
 Create parallel subagents:
-
 - One subagent per `*-service` repo
 - One subagent for `auth-middleware` (if discovered)
 - One subagent for `auth-middleware-go` (if discovered)
@@ -56,7 +60,7 @@ Each subagent must:
 - confirm repo exists locally under `workdir/repos/<repo>`
 - identify: purpose, runtime port, exposed endpoints, auth requirements
 - identify: outbound calls to other services (exact method + path + payload + headers)
-- cite evidence with file path + line numbers
+- capture evidence with file path + line numbers
 - report any newly discovered repos to add
 
 ### 5) Validation & correction (FAIL-FAST BEFORE OUTPUT)
@@ -90,9 +94,10 @@ Run these checks and do not proceed until they pass:
 ## Output requirements
 - Produce exactly one Markdown document at `output/SYSTEMS_MAP.md`.
 - Must include:
+  - repositories in scope (all repos investigated + why)
   - service inventory (name, purpose, tech, port)
   - how services interact (explicit call graph)
-  - auth model summary (who validates tokens, where middleware is used)
+  - auth model summary (who generates tokens, where validation occurs)
   - evidence references (file paths + line numbers)
   - known issues/spec drift/unknowns
 - Output only Markdown.
