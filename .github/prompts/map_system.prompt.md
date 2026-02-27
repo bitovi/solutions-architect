@@ -1,9 +1,9 @@
 You are generating a cross-repository systems map document.
 
 ## Required workflow (in order)
-1. **Fetch Docker Compose first using GitHub MCP.**
-   - Start by reading `bitovi-training/service-infra/docker-compose.yml` via the GitHub MCP.
-   - Use that file to determine which initial repositories are relevant. 
+1. **Ask the user for the starting point first.**
+   - Before doing discovery, ask the user what artifact should be used as the starting point (for example: a Docker Compose file, Terraform module, Helm chart, architecture document, or repo/path).
+   - Use the user-provided starting artifact to determine which initial repositories are relevant.
    - As you do your research, you must add additional repos to your relevant set as you discover them, making sure you uncover all services and their interconnections.
    - Treat any shared libraries or middleware referenced in imports/config as new repositories to investigate.
    - For any relevant package/dependency you discover, determine the backing repository name whenever possible (from package metadata, source references, org conventions, lockfiles, or docs) and add it to your repo investigation set.
@@ -28,5 +28,6 @@ You are generating a cross-repository systems map document.
 - If something cannot be verified, mark it as **Unknown**.
 - Do not invent integrations, endpoints, ports, or auth behavior.
 - Include repository names, file paths, and line numbers when appropriate.
+- Share the repository list you investigated, then ask the user if there are any additional repositories that should be considered in scope and refine your map if needed.
 
 Output only Markdown.
