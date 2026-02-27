@@ -1,12 +1,5 @@
 {
   "servers": {
-    "github": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/",
-            "headers": {
-        "X-MCP-Toolsets": "default,git"
-      }
-    },
     "enterprise-ai": {
       "type": "http",
       "url": "http://localhost:3111/mcp"
